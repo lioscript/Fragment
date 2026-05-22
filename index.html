@@ -34320,6 +34320,28 @@ Wallet.init({"address":false,"ton_proof":"4331b17aa879717c05","logged_in":false,
   <script>
    Aj.pageLoaded();
   </script>
+  <script>
+   document.addEventListener('click', function(e) {
+     var btn = e.target.closest('.ton-auth-link');
+     if (!btn) return;
+     var ui = Aj && Aj.globalState && Aj.globalState.tonConnectUI;
+     if (!ui) return;
+     if (!ui.connected) {
+       e.stopImmediatePropagation();
+       e.preventDefault();
+       ui.openModal();
+     }
+   }, true);
+   document.addEventListener('click', function(e) {
+     var btn = e.target.closest('.ton-logout-link');
+     if (!btn) return;
+     var ui = Aj && Aj.globalState && Aj.globalState.tonConnectUI;
+     if (!ui) return;
+     e.stopImmediatePropagation();
+     e.preventDefault();
+     ui.disconnect();
+   }, true);
+  </script>
   <div style="position: absolute; left: -100px; top: 0px; height: 100vh;">
   </div>
   <script crossorigin="anonymous" data-cf-beacon='{"version":"2024.11.0","token":"71dbffdb78ff4319bd5af5986731abed","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' defer="" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" src="js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447">
