@@ -1045,7 +1045,7 @@ var Wallet = {
       var authAddress = Aj.globalState.tonConnectAuthAddress,
           wallet = Aj.globalState.tonConnectUI.wallet;
       if (wallet && wallet.account) {
-        if (!authAddress || authAddress != wallet.account.address) {
+        if (authAddress && authAddress != wallet.account.address) {
           Wallet.disconnect();
         }
       } else {

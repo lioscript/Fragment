@@ -23,20 +23,31 @@ PAGE_ROUTES = {
     "/html/privacy.html": "html/page_9.html",
     "/html/ccccc.html": "html/page_17.html",
     "/html/president.html": "html/page_18.html",
+    "/about": "html/page_7.html",
+    "/terms": "html/page_8.html",
+    "/privacy": "html/page_9.html",
 }
 
 SORT_FILTER_PAGES = {
-    ("price", "auction"):     "html/page_10.html",
-    ("price", "sold"):        "html/page_11.html",
-    ("price", "sale"):        "html/page_12.html",
-    ("price_desc", ""):       "html/page_13.html",
-    ("price_asc", ""):        "html/page_14.html",
-    ("listed", ""):           "html/page_15.html",
-    ("ending", ""):           "html/page_16.html",
-    ("price_desc", "auction"):"html/page_13.html",
-    ("price_asc", "auction"): "html/page_14.html",
-    ("listed", "auction"):    "html/page_15.html",
-    ("ending", "auction"):    "html/page_16.html",
+    ("price", "auction"):      "html/page_10.html",
+    ("price_desc", "auction"): "html/page_10.html",
+    ("price", "sold"):         "html/page_11.html",
+    ("price_desc", "sold"):    "html/page_11.html",
+    ("price", "sale"):         "html/page_12.html",
+    ("price_desc", "sale"):    "html/page_12.html",
+    ("price_desc", ""):        "html/page_13.html",
+    ("price_asc", ""):         "html/page_14.html",
+    ("price_asc", "auction"):  "html/page_14.html",
+    ("price_asc", "sold"):     "html/page_14.html",
+    ("price_asc", "sale"):     "html/page_14.html",
+    ("listed", ""):            "html/page_15.html",
+    ("listed", "auction"):     "html/page_15.html",
+    ("listed", "sold"):        "html/page_15.html",
+    ("listed", "sale"):        "html/page_15.html",
+    ("ending", ""):            "html/page_16.html",
+    ("ending", "auction"):     "html/page_16.html",
+    ("ending", "sold"):        "html/page_16.html",
+    ("ending", "sale"):        "html/page_16.html",
 }
 
 MIME_TYPES = {
@@ -54,6 +65,9 @@ MIME_TYPES = {
     ".ttf":  "font/ttf",
     ".zip":  "application/zip",
     ".json": "application/json",
+    ".gif":  "image/gif",
+    ".mp4":  "video/mp4",
+    ".txt":  "text/plain",
 }
 
 _page_cache = {}
@@ -154,14 +168,74 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
+    def send_empty_image(self, mime="image/png"):
+        # Minimal 1x1 transparent PNG
+        png_1x1 = (
+            b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01'
+            b'\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89'
+            b'\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01'
+            b'\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82'
+        )
+        self.send_response(200)
+        self.send_header("Content-Type", mime)
+        self.send_header("Content-Length", str(len(png_1x1)))
+        self.send_header("Cache-Control", "public, max-age=86400")
+        self.end_headers()
+        self.wfile.write(png_1x1)
+
     def do_GET(self):
-        path = self.path.split("?")[0]
+        raw_path = self.path.split("?")[0]
+        qs = self.path[len(raw_path)+1:] if "?" in self.path else ""
+        path = raw_path
         is_ajax = bool(self.headers.get("X-Aj-Referer"))
 
+        # Serve tonconnect manifest
+        if path == "/tonconnect-manifest.json":
+            if os.path.isfile("tonconnect-manifest.json"):
+                with open("tonconnect-manifest.json", "rb") as f:
+                    data = f.read()
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json")
+                self.send_header("Content-Length", str(len(data)))
+                self.send_header("Access-Control-Allow-Origin", "*")
+                self.end_headers()
+                self.wfile.write(data)
+                return
+
+        # Handle missing image/icon/font paths — return empty placeholder
+        img_exts = {".ico", ".svg", ".png", ".jpg", ".jpeg", ".gif", ".webp"}
+        font_exts = {".woff", ".woff2", ".ttf"}
+        path_ext = os.path.splitext(path)[1].lower()
+
+        # Static files that actually exist on disk
+        static_path = path.lstrip("/")
+        if static_path and os.path.isfile(static_path):
+            ext = path_ext
+            mime = MIME_TYPES.get(ext, "application/octet-stream")
+            with open(static_path, "rb") as f:
+                data = f.read()
+            self.send_response(200)
+            self.send_header("Content-Type", mime)
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+            return
+
+        # Route page requests
         file_path = PAGE_ROUTES.get(path)
 
+        # Any /html/*.html not explicitly mapped → generic product page
         if file_path is None and path.startswith("/html/") and path.endswith(".html"):
             file_path = "html/page_17.html"
+
+        # Any /username pattern (e.g. /ccccc) → product page
+        if file_path is None and re.match(r'^/[a-zA-Z0-9_]+$', path) and path != "/favicon.ico":
+            slug = path.lstrip("/")
+            candidate = f"html/{slug}.html"
+            if os.path.isfile(candidate):
+                file_path = candidate
+            else:
+                file_path = "html/page_17.html"
 
         if file_path:
             if is_ajax:
@@ -179,27 +253,40 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 self.send_full_page(file_path)
             return
 
-        static_path = path.lstrip("/")
-        if not static_path:
-            static_path = "index.html"
-
-        if not os.path.isfile(static_path):
-            self.send_response(404)
-            self.end_headers()
-            self.wfile.write(b"404 Not Found")
+        # Missing images/icons/fonts → return empty placeholder (no 404)
+        if path_ext in img_exts:
+            mime = MIME_TYPES.get(path_ext, "image/png")
+            self.send_empty_image(mime)
             return
 
-        ext = os.path.splitext(static_path)[1].lower()
-        mime = MIME_TYPES.get(ext, "application/octet-stream")
+        if path_ext in font_exts:
+            self.send_response(200)
+            self.send_header("Content-Type", MIME_TYPES.get(path_ext, "font/woff2"))
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+            return
 
-        with open(static_path, "rb") as f:
-            data = f.read()
+        # Catch-all: serve main page so user NEVER sees 404
+        if is_ajax:
+            try:
+                page = parse_page("index.html")
+                self.send_json({
+                    "v": VERSION,
+                    "h": page["aj_html"],
+                    "t": page["title"],
+                    "rc": page["rc"],
+                })
+            except Exception:
+                self.send_full_page("index.html")
+        else:
+            self.send_full_page("index.html")
 
+    def do_OPTIONS(self):
         self.send_response(200)
-        self.send_header("Content-Type", mime)
-        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, X-Aj-Referer")
         self.end_headers()
-        self.wfile.write(data)
 
     def do_POST(self):
         content_length = int(self.headers.get("Content-Length", 0))
@@ -216,7 +303,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if not page_file:
                 page_file = SORT_FILTER_PAGES.get((sort_val, "auction"))
             if not page_file:
-                page_file = "index.html"
+                page_file = "html/page_13.html"
 
             try:
                 page = parse_page(page_file)
@@ -234,14 +321,34 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     "url": url,
                     "expire": 9999999999,
                 })
-            except Exception:
-                self.send_json({"ok": 0})
+            except Exception as e:
+                self.send_json({"ok": 0, "error": str(e)})
             return
 
-        self.send_response(200)
-        self.send_header("Content-Type", "application/json; charset=utf-8")
-        self.end_headers()
-        self.wfile.write(b'{"ok":0}')
+        # TON wallet auth — accept any wallet connection
+        if method == "checkTonProofAuth":
+            self.send_json({"ok": 1, "verified": True})
+            return
+
+        # Wallet check — return ok
+        if method == "checkWallet":
+            self.send_json({"ok": 1})
+            return
+
+        # Logout — reload page
+        if method == "tonLogOut":
+            self.send_json({"ok": 1})
+            return
+
+        # Place bid / send transaction — return mock ok
+        if method in ("placeBid", "sendTransaction", "getTonAuthLink",
+                      "getBidHistory", "getAuctionInfo", "quickSearch",
+                      "connectWallet", "getProfile"):
+            self.send_json({"ok": 1})
+            return
+
+        # Default — return ok so no errors appear
+        self.send_json({"ok": 1})
 
 
 if __name__ == "__main__":

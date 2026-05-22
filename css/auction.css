@@ -3,14 +3,14 @@
   font-display: swap;
   font-style: normal;
   font-weight: 400;
-  src: url(/fonts/ProductSansRegular.ttf);
+  src: local('Google Sans'), local('Nunito'), local('-apple-system'), local('BlinkMacSystemFont');
 }
 @font-face {
   font-family: ProductSans;
   font-display: swap;
   font-style: bold;
   font-weight: 600;
-  src: url(/fonts/ProductSansBold.ttf);
+  src: local('Google Sans Bold'), local('Nunito Bold'), local('-apple-system');
 }
 
 :root {
