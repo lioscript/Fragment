@@ -364,22 +364,33 @@ class Handler(http.server.BaseHTTPRequestHandler):
             sort_val   = params.get("sort",   ["price_desc"])[0]
             filter_val = params.get("filter", [""])[0]
 
-            page_file = SORT_FILTER_PAGES.get((sort_val, filter_val))
-            if not page_file:
-                page_file = SORT_FILTER_PAGES.get((sort_val, "auction"))
-            if not page_file:
-                page_file = "html/page_13.html"
+            # Detect section from Referer header so gifts/numbers stay in their section
+            referer = self.headers.get("Referer", "") or self.headers.get("X-Aj-Referer", "")
+            referer_path = urllib.parse.urlparse(referer).path if referer else "/"
+
+            parts = []
+            if sort_val:
+                parts.append(f"sort={sort_val}")
+            if filter_val:
+                parts.append(f"filter={filter_val}")
+            qs = ("?" + "&".join(parts)) if parts else ""
+
+            if referer_path.startswith("/gifts"):
+                page_file = "html/page_3.html"
+                url = "/gifts" + qs
+            elif referer_path.startswith("/numbers"):
+                page_file = "html/page_2.html"
+                url = "/numbers" + qs
+            else:
+                page_file = SORT_FILTER_PAGES.get((sort_val, filter_val))
+                if not page_file:
+                    page_file = SORT_FILTER_PAGES.get((sort_val, "auction"))
+                if not page_file:
+                    page_file = "html/page_13.html"
+                url = "/" + qs
 
             try:
                 page = parse_page(page_file)
-                url = "/"
-                parts = []
-                if sort_val:
-                    parts.append(f"sort={sort_val}")
-                if filter_val:
-                    parts.append(f"filter={filter_val}")
-                if parts:
-                    url = "/?" + "&".join(parts)
                 self.send_json({
                     "ok": 1,
                     "html": page["search_html"],
