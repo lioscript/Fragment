@@ -34320,25 +34320,134 @@ Wallet.init({"address":false,"ton_proof":"4331b17aa879717c05","logged_in":false,
   <script>
    Aj.pageLoaded();
   </script>
+  <style>
+   #tc-custom-modal-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483646;background:rgba(0,0,0,.72);align-items:center;justify-content:center;}
+   #tc-custom-modal-overlay.tc-open{display:flex;}
+   #tc-custom-modal{background:#1a2026;border-radius:16px;padding:24px;width:360px;max-width:calc(100vw - 32px);box-shadow:0 24px 64px rgba(0,0,0,.6);font-family:-apple-system,BlinkMacSystemFont,'Roboto',Arial,sans-serif;color:#fff;position:relative;}
+   #tc-custom-modal h3{margin:0 0 8px;font-size:20px;font-weight:700;text-align:center;}
+   #tc-custom-modal p{margin:0 0 20px;font-size:14px;color:#8794a1;text-align:center;}
+   #tc-custom-modal-close{position:absolute;top:14px;right:14px;background:none;border:none;color:#8794a1;font-size:22px;cursor:pointer;line-height:1;padding:4px;}
+   #tc-custom-modal-close:hover{color:#fff;}
+   .tc-wallet-btn{display:flex;align-items:center;gap:12px;width:100%;padding:12px 16px;margin-bottom:10px;background:#242e38;border:none;border-radius:12px;cursor:pointer;color:#fff;font-size:15px;font-weight:600;transition:background .15s;}
+   .tc-wallet-btn:hover{background:#2d3a47;}
+   .tc-wallet-btn img{width:40px;height:40px;border-radius:10px;}
+   .tc-wallet-btn span{flex:1;text-align:left;}
+   .tc-wallet-btn small{color:#8794a1;font-size:12px;font-weight:400;}
+   #tc-qr-wrap{text-align:center;margin-top:16px;display:none;}
+   #tc-qr-wrap img{border-radius:8px;border:8px solid #fff;}
+   #tc-qr-wrap p{margin:8px 0 0;font-size:12px;color:#8794a1;}
+   #tc-copy-link{display:inline-block;margin-top:8px;font-size:12px;color:#4db2ff;cursor:pointer;text-decoration:underline;}
+  </style>
+  <div id="tc-custom-modal-overlay">
+   <div id="tc-custom-modal">
+    <button id="tc-custom-modal-close">&#x2715;</button>
+    <h3>Connect Wallet</h3>
+    <p>Choose your TON wallet to connect</p>
+    <div id="tc-wallet-list"></div>
+    <div id="tc-qr-wrap">
+     <img id="tc-qr-img" src="" alt="QR code" width="200" height="200"/>
+     <p>Scan with your wallet app</p>
+     <span id="tc-copy-link">Copy link</span>
+    </div>
+   </div>
+  </div>
   <script>
+  (function() {
+   var overlay = document.getElementById('tc-custom-modal-overlay');
+   var walletList = document.getElementById('tc-wallet-list');
+   var qrWrap = document.getElementById('tc-qr-wrap');
+   var qrImg = document.getElementById('tc-qr-img');
+   var copyLink = document.getElementById('tc-copy-link');
+   var currentLink = '';
+
+   document.getElementById('tc-custom-modal-close').addEventListener('click', function() {
+     overlay.classList.remove('tc-open');
+   });
+   overlay.addEventListener('click', function(e) {
+     if (e.target === overlay) overlay.classList.remove('tc-open');
+   });
+   copyLink.addEventListener('click', function() {
+     if (currentLink) {
+       navigator.clipboard && navigator.clipboard.writeText(currentLink);
+       copyLink.textContent = 'Copied!';
+       setTimeout(function(){ copyLink.textContent = 'Copy link'; }, 2000);
+     }
+   });
+
+   function showQR(url) {
+     currentLink = url;
+     qrImg.src = 'https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=' + encodeURIComponent(url);
+     qrWrap.style.display = 'block';
+   }
+
+   function openCustomModal() {
+     var ui = Aj && Aj.globalState && Aj.globalState.tonConnectUI;
+     if (!ui) { return; }
+     walletList.innerHTML = '';
+     qrWrap.style.display = 'none';
+
+     var walletDefs = [
+       { name: 'Tonkeeper', appName: 'tonkeeper', icon: 'https://tonkeeper.com/assets/tonconnect-icon.png' },
+       { name: 'TON Wallet', appName: 'ton-wallet', icon: 'https://wallet.tg/images/logo-288.png' },
+       { name: 'MyTonWallet', appName: 'mytonwallet', icon: 'https://mytonwallet.io/icon-256.png' }
+     ];
+
+     var walletsPromise;
+     try { walletsPromise = ui.getWallets(); } catch(e) { walletsPromise = Promise.resolve([]); }
+     walletsPromise.then(function(wallets) {
+       var walletsToShow = wallets.length ? wallets.slice(0, 5) : walletDefs;
+       walletsToShow.forEach(function(w) {
+         var name = w.name || w.appName || 'Wallet';
+         var icon = w.imageUrl || w.icon || '';
+         var btn = document.createElement('button');
+         btn.className = 'tc-wallet-btn';
+         btn.innerHTML = (icon ? '<img src="' + icon + '" onerror="this.style.display=\'none\'">' : '') +
+           '<span>' + name + '<br><small>Connect via TON Connect</small></span>';
+         btn.addEventListener('click', function() {
+           try {
+             var link;
+             if (w.universalLink || w.bridgeUrl) {
+               link = ui.connector.connect({ universalLink: w.universalLink, bridgeUrl: w.bridgeUrl });
+             } else {
+               try { ui.openSingleWalletModal(w.appName); } catch(e2) {}
+               overlay.classList.remove('tc-open');
+               return;
+             }
+             if (link) {
+               if (/Mobi|Android/i.test(navigator.userAgent)) {
+                 window.open(link, '_blank');
+               } else {
+                 showQR(link);
+               }
+             }
+           } catch(err) { console.error('TC connect err', err); }
+         });
+         walletList.appendChild(btn);
+       });
+     }).catch(function() {
+       walletDefs.forEach(function(w) {
+         var btn = document.createElement('button');
+         btn.className = 'tc-wallet-btn';
+         btn.innerHTML = '<img src="' + w.icon + '" onerror="this.style.display=\'none\'">' +
+           '<span>' + w.name + '<br><small>Connect via TON Connect</small></span>';
+         btn.addEventListener('click', function() {
+           try { ui.openSingleWalletModal(w.appName); } catch(e) {}
+           overlay.classList.remove('tc-open');
+         });
+         walletList.appendChild(btn);
+       });
+     });
+     overlay.classList.add('tc-open');
+   }
+
    document.addEventListener('click', function(e) {
      var btn = e.target.closest('.ton-auth-link');
      if (!btn) return;
      e.stopImmediatePropagation();
      e.preventDefault();
-     var ui = Aj && Aj.globalState && Aj.globalState.tonConnectUI;
-     if (!ui) {
-       alert('TON Connect UI not initialized');
-       return;
-     }
-     if (!ui.connected) {
-       try {
-         ui.openModal();
-       } catch(err) {
-         alert('openModal error: ' + err.message);
-       }
-     }
+     openCustomModal();
    }, true);
+
    document.addEventListener('click', function(e) {
      var btn = e.target.closest('.ton-logout-link');
      if (!btn) return;
@@ -34348,6 +34457,7 @@ Wallet.init({"address":false,"ton_proof":"4331b17aa879717c05","logged_in":false,
      e.preventDefault();
      ui.disconnect();
    }, true);
+  })();
   </script>
   <div style="position: absolute; left: -100px; top: 0px; height: 100vh;">
   </div>
