@@ -5488,6 +5488,9 @@ a.tm-table-action-link:hover {
   .tm-auction-section .tm-section-subheader {
     order: 2;
   }
+  .tm-auction-section .tm-main-nft-image-header {
+    order: 2;
+  }
   .tm-auction-section .tm-section-bid-info {
     order: 3;
   }
