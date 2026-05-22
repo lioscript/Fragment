@@ -418,7 +418,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_json({"ok": 1})
 
 
+class ReusableHTTPServer(http.server.HTTPServer):
+    allow_reuse_address = True
+
 if __name__ == "__main__":
-    server = http.server.HTTPServer(("0.0.0.0", 5000), Handler)
+    server = ReusableHTTPServer(("0.0.0.0", 5000), Handler)
     print("Server running on port 5000")
     server.serve_forever()
