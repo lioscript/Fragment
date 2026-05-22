@@ -299,8 +299,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if file_path is None and path.startswith("/number/"):
             file_path = "html/page_number.html" if os.path.isfile("html/page_number.html") else "html/page_17.html"
 
-        # /gift/* or /gifts/* → gift product page
-        if file_path is None and (re.match(r'^/gift/', path) or re.match(r'^/gifts/[^/]+/', path)):
+        # /gifts/collection → gifts listing filtered by collection
+        if file_path is None and re.match(r'^/gifts/[^/]+$', path):
+            file_path = "html/page_3.html"
+
+        # /gift/item or /gifts/collection/item → gift product page
+        if file_path is None and (re.match(r'^/gift/', path) or re.match(r'^/gifts/[^/]+/.+', path)):
             file_path = "html/page_gift.html" if os.path.isfile("html/page_gift.html") else "html/page_17.html"
 
         # /username slugs → username product page
