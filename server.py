@@ -260,18 +260,26 @@ class Handler(http.server.BaseHTTPRequestHandler):
         path = raw_path
         is_ajax = bool(self.headers.get("X-Aj-Referer"))
 
-        # tonconnect manifest
+        # tonconnect manifest — serve with dynamic URL matching the real host
         if path == "/tonconnect-manifest.json":
-            if os.path.isfile("tonconnect-manifest.json"):
-                with open("tonconnect-manifest.json", "rb") as f:
-                    data = f.read()
-                self.send_response(200)
-                self.send_header("Content-Type", "application/json")
-                self.send_header("Content-Length", str(len(data)))
-                self.send_header("Access-Control-Allow-Origin", "*")
-                self.end_headers()
-                self.wfile.write(data)
-                return
+            host = self.headers.get("Host", "")
+            scheme = "https" if host and not host.startswith("localhost") else "http"
+            origin = f"{scheme}://{host}" if host else "http://localhost:5000"
+            manifest = {
+                "url": origin,
+                "name": "Fragment",
+                "iconUrl": f"{origin}/img/fragment_icon.svg",
+                "termsOfUseUrl": f"{origin}/terms",
+                "privacyPolicyUrl": f"{origin}/privacy"
+            }
+            data = json.dumps(manifest, ensure_ascii=False).encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(data)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(data)
+            return
 
         path_ext = os.path.splitext(path)[1].lower()
 

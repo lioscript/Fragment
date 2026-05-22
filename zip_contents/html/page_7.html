@@ -1,0 +1,2226 @@
+<html class="header-tabs">
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   How does Fragment work? – Fragment
+  </title>
+  <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <meta content="telephone=no" name="format-detection"/>
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+  <meta content="176" name="MobileOptimized"/>
+  <meta content="True" name="HandheldFriendly"/>
+  <meta content="summary" name="twitter:card"/>
+  <meta content="https://fragment.com/about" property="og:url"/>
+  <meta content="How does Fragment work?" property="og:title"/>
+  <meta content="https://fragment.com/img/fragment_image.png" property="og:image"/>
+  <meta content="Learn more about collectible usernames and how to get them." property="og:description"/>
+  <meta content="Fragment Auctions" property="og:site_name"/>
+  <link href="https://fragment.com/about" rel="canonical"/>
+  <link href="/img/fragment.ico" rel="shortcut icon" type="image/x-icon"/>
+  <link color="#121519" href="/img/fragment_icon.svg" rel="mask-icon"/>
+  <script>
+   document.cookie="stel_dt="+encodeURIComponent((new Date).getTimezoneOffset())+";path=/;max-age=31536000;samesite=None;secure"
+  </script>
+  <link href="css/font-roboto.css" rel="stylesheet" type="text/css"/>
+  <link href="css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="css/bootstrap-extra.css" rel="stylesheet"/>
+  <link href="css/auction.css" rel="stylesheet"/>
+  <style id="_goober">
+   .go2281452115{box-shadow:0 4px 16px rgba(0, 0, 0, 0.08), 0 16px 64px rgba(0, 0, 0, 0.16);width:fit-content;margin:auto;}@media (max-width: 440px){.go2281452115{width:100%;height:fit-content;margin:auto 0 0 0;}}.go3288899091{transform:translateY(-8px);margin-bottom:12px;}.go3535743411{margin-bottom:12px;}tc-root *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, Tahoma, Verdana, sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;-webkit-tap-highlight-color:transparent;}tc-root img{-webkit-user-select:none;-webkit-touch-callout:none;}tc-root *:focus{outline:#08f auto 2px;}tc-root li{list-style:none;}tc-root button{outline:none;}body.tc-disable-scroll{position:fixed;overflow-y:scroll;right:0;left:0;}body.tc-using-mouse tc-root *:focus{outline:none;}
+  </style>
+  <style>
+   .tg-auth-button{width:fit-content;height:44px;padding:0 28px;text-transform:none;background:#119AF5;border-radius:22px;cursor:pointer;font-weight:600;font-size:16px;display:flex;align-items:center;font-family:-apple-system,system-ui,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;color:white;position:relative;overflow:hidden;user-select:none;border:none}.tg-auth-button:hover{background:#1090E5}.tg-auth-button:before{content:" ";width:22px;height:22px;margin-right:4px;display:inline-block;vertical-align:top;background:no-repeat 0 0;background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' viewBox='0 0 22 22' fill='none'%3E%3Cpath d='M2.81376 10.5943C7.36914 8.61002 10.406 7.30175 11.9245 6.66971C16.265 4.86489 17.1658 4.55143 17.7542 4.54094C17.8836 4.53874 18.1716 4.57072 18.3596 4.72281C18.5158 4.85097 18.5598 5.0243 18.5818 5.14588C18.6013 5.26745 18.6282 5.54454 18.6062 5.76083C18.3719 8.23138 17.3539 14.2266 16.8363 16.9938C16.619 18.1647 16.1869 18.5572 15.7695 18.5955C14.8613 18.679 14.1728 17.996 13.294 17.42C11.9196 16.5185 11.1433 15.9575 9.80793 15.0779C8.26505 14.0613 9.26594 13.5025 10.1448 12.5895C10.3743 12.3505 14.373 8.71426 14.4487 8.38445C14.4585 8.34319 14.4683 8.18939 14.3755 8.10834C14.2852 8.02705 14.1508 8.05488 14.0532 8.07685C13.914 8.1081 11.7193 9.56015 7.4618 12.4328C6.83928 12.861 6.27536 13.0697 5.76758 13.0587C5.21097 13.0468 4.13689 12.7433 3.3386 12.484C2.3621 12.166 1.5833 11.9977 1.65166 11.4575C1.68583 11.1763 2.07406 10.8884 2.81376 10.5943Z' fill='white'/%3E%3C/svg%3E");background-size:22px;background-position:center;display:inline-block;}.tg-auth-button[data-style~="square"]{border-radius:5px}.tg-auth-button[data-style~="outlined"]{color:black;background:transparent;border:1px solid var(--border_color,rgba(0,0,0,0.06))}.tg-auth-button[data-style~="outlined"]:hover{border:1px solid rgba(0,0,0,0.08);background:rgba(116,116,128,0.06)}.tg-auth-button[data-style~="outlined"]:before{content:" ";height:22px;margin-right:8px;width:22px;display:inline-block;vertical-align:top;background-size:16px;background-position:center;background-color:#119AF5;border-radius:34px;}.tg-auth-button[data-style~="icon"]{width:44px;padding:0;justify-content:center;display:flex;font-size:0}.tg-auth-button[data-style~="icon"]::before{margin-right:0 !important}.tg-auth-button[data-style~="shine"]::after{content:" ";position:absolute;top:-2px;left:-75%;width:70px;max-width:50%;bottom:-2px;background:linear-gradient(95deg,rgba(255,255,255,.0) 0%,rgba(255,255,255,.2) 50%,rgba(255,255,255,.0) 100%);animation:tg-shine 4s infinite;mix-blend-mode: soft-light;}.tg-auth-button[data-style~="outlined"][data-style~="shine"]::after{background:linear-gradient(95deg,rgba(255,255,255,.0) 0%,rgba(255,255,255,.6) 50%,rgba(255,255,255,.0) 100%);}@keyframes tg-shine{0%{left:-75%}100%{left:125%}}.tg-ripple-mask{position:absolute;left:0;right:0;top:0;bottom:0;transform:translateZ(0);overflow:hidden;pointer-events:none;}.tg-ripple{position:absolute;width:200%;left:50%;top:50%;margin:-100% 0 0 -100%;padding-top:200%;border-radius:50%;background-color:#ffffff1f;transition:transform .65s ease-out,opacity .65s ease-out,background-color .65s ease-out;opacity:0;}.tg-auth-button[data-style~="outlined"] .tg-ripple{background-color:#0000000f}
+  </style>
+ </head>
+ <body class="emoji_image" ontouchstart="">
+  <svg style="position:absolute;width:0;height:0;left:-10000px" xmlns="http://www.w3.org/2000/svg">
+   <defs>
+    <path d="m8.88 13.45 2.89-5.71c.33-.66 1.14-.93 1.8-.6.25.13.46.35.59.61l2.73 5.51c.22.45.66.76 1.16.82l5.7.68c.78.09 1.33.79 1.24 1.57-.04.31-.18.61-.41.84l-4.52 4.42c-.18.18-.27.43-.23.68l.75 5.98c.1.85-.5 1.63-1.36 1.74-.32.04-.65-.02-.94-.18l-4.77-2.59c-.34-.19-.76-.19-1.11-.01l-4.93 2.52c-.7.35-1.55.07-1.91-.62-.13-.26-.18-.55-.14-.84l.4-2.74c.19-1.34 1.03-2.51 2.23-3.12l5.49-2.78c.15-.08.2-.26.13-.4-.06-.12-.18-.18-.31-.16l-6.71.95c-1.02.15-2.06-.14-2.87-.79l-2.23-1.82c-.64-.51-.73-1.45-.22-2.09.24-.29.59-.48.97-.53l5.73-.74c.36-.04.68-.27.85-.6z" id="icon-premium">
+    </path>
+    <path d="m4.02 7h15.945c.33 0 .6.27.6.615 0 .105-.015.21-.075.3l-7.56 13.62c-.33.6-1.08.81-1.665.48-.21-.12-.375-.285-.48-.495l-7.305-13.62c-.15-.3-.045-.675.255-.825.09-.045.18-.075.285-.075zm7.98 14.67v-14.67z" fill="none" id="icon-ton-qr" stroke="currentColor" stroke-width="2.1">
+    </path>
+    <path d="M 6.67 5.74 L 8.88 1.32 C 9.13 0.81 9.74 0.6 10.25 0.86 C 10.45 0.96 10.61 1.13 10.71 1.33 L 12.79 5.59 C 12.96 5.93 13.29 6.17 13.67 6.22 L 18.03 6.74 C 18.62 6.82 19.05 7.36 18.98 7.96 C 18.95 8.2 18.84 8.43 18.66 8.61 L 15.21 12.03 C 15.07 12.16 15.01 12.36 15.03 12.56 L 15.6 17.17 C 15.69 17.83 15.22 18.44 14.57 18.52 C 14.32 18.55 14.07 18.5 13.85 18.38 L 10.21 16.38 C 9.95 16.24 9.63 16.23 9.36 16.37 L 5.59 18.32 C 5.06 18.59 4.41 18.38 4.14 17.84 C 4.03 17.64 4 17.41 4.03 17.19 L 4.33 15.07 C 4.48 14.03 5.12 13.14 6.04 12.66 L 10.23 10.51 C 10.34 10.45 10.38 10.31 10.33 10.2 C 10.28 10.11 10.19 10.06 10.09 10.08 L 4.97 10.82 C 4.19 10.93 3.39 10.71 2.78 10.2 L 1.07 8.8 C 0.58 8.4 0.51 7.68 0.9 7.18 C 1.09 6.96 1.35 6.81 1.64 6.77 L 6.02 6.2 C 6.3 6.17 6.54 5.99 6.67 5.74 Z" id="icon-star">
+    </path>
+    <lineargradient id="s2" x1="25%" x2="74.92%" y1="0.825%" y2="107.86%">
+     <stop offset="0%" stop-color="#FFD951">
+     </stop>
+     <stop offset="100%" stop-color="#FFB222">
+     </stop>
+    </lineargradient>
+    <lineargradient id="s3" x1="50%" x2="50%" y1="0%" y2="99.8%">
+     <stop offset="0%" stop-color="#E58F0D">
+     </stop>
+     <stop offset="100%" stop-color="#EB7915">
+     </stop>
+    </lineargradient>
+    <filter filterunits="objectBoundingBox" height="110.6%" id="s4" width="110.3%" x="-5.2%" y="-5.3%">
+     <feoffset dx="1" dy="1" in="SourceAlpha" result="shadowOffsetInner1">
+     </feoffset>
+     <fecomposite in="shadowOffsetInner1" in2="SourceAlpha" k2="-1" k3="1" operator="arithmetic" result="shadowInnerInner1">
+     </fecomposite>
+     <fecolormatrix in="shadowInnerInner1" type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.657 0">
+     </fecolormatrix>
+    </filter>
+    <g fill="none" fill-rule="evenodd" id="icon-colorful-star" stroke="none" stroke-width="1">
+     <use fill="url(#s2)" fill-rule="evenodd" xlink:href="#icon-star">
+     </use>
+     <use fill="#000" filter="url(#s4)" xlink:href="#icon-star">
+     </use>
+     <use stroke="url(#s3)" stroke-width="0.89" xlink:href="#icon-star">
+     </use>
+    </g>
+    <g fill="none" fill-rule="evenodd" id="icon-multi-star" stroke="none" stroke-width="1">
+     <use stroke="currentColor" stroke-width="2.67" xlink:href="#icon-star">
+     </use>
+     <use fill="url(#s2)" fill-rule="evenodd" xlink:href="#icon-star">
+     </use>
+     <use fill="#000" filter="url(#s4)" xlink:href="#icon-star">
+     </use>
+     <use stroke="url(#s3)" stroke-width="0.89" xlink:href="#icon-star">
+     </use>
+     <path d="M 5.2 19 L 14 19 L 9.8 16.7 L 5.2 19 Z" fill="currentColor">
+     </path>
+    </g>
+    <filter id="svg-filter--filters-icon-color">
+     <feflood flood-color="var(--filters-icon-color)">
+     </feflood>
+     <fecomposite in2="SourceGraphic" operator="in">
+     </fecomposite>
+    </filter>
+   </defs>
+  </svg>
+  <div class="progress-bar" id="aj_progress" style="width: 0px; transition: width 0.3s linear, box-shadow 0.2s; position: fixed; z-index: 1000; top: 0px; height: 3px;">
+  </div>
+  <div id="aj_content">
+   <header class="tm-header with-tabs">
+    <div class="tm-header-logo">
+     <a class="tm-logo js-header-logo js-logo js-random-logo js-logo-hoverable" href="/" style="--image-url-logo-icon-animated: url('/img/TelemintLogoSprite1.svg');">
+      <i class="tm-logo-icon js-logo-icon">
+      </i>
+      <i class="tm-logo-text">
+      </i>
+     </a>
+    </div>
+    <div class="tm-header-body">
+     <div class="tm-header-tabs-wrap">
+      <div class="tm-header-tabs tm-x-scrollable js-x-scrollable">
+       <a class="tm-header-tab" href="/">
+        Usernames
+       </a>
+       <a class="tm-header-tab" href="/numbers">
+        Numbers
+       </a>
+       <a class="tm-header-tab" href="/gifts">
+        Gifts
+        <span class="tm-label-new tm-header-tab-label-new">
+         New
+        </span>
+       </a>
+       <a class="tm-header-tab" href="/stars">
+        Stars
+       </a>
+       <a class="tm-header-tab" href="/premium">
+        Premium
+       </a>
+       <a class="tm-header-tab" href="/ads">
+        Ads
+       </a>
+      </div>
+     </div>
+    </div>
+    <div class="tm-header-actions tm-header-actions-wide">
+     <button class="btn btn-default tm-header-action tm-header-button login-link">
+      <i class="icon icon-connect-telegram">
+      </i>
+      <span class="tm-button-label">
+       Connect Telegram
+      </span>
+     </button>
+     <button class="btn btn-primary tm-header-action tm-header-button ton-auth-link">
+      <i class="icon icon-connect-ton">
+      </i>
+      <span class="tm-button-label">
+       Connect TON
+      </span>
+     </button>
+    </div>
+    <div class="tm-header-actions tm-header-actions-thin">
+     <button class="btn btn-primary tm-header-action tm-header-button ton-auth-link">
+      <i class="icon icon-connect-ton">
+      </i>
+      <span class="tm-button-label">
+       Connect TON
+      </span>
+     </button>
+    </div>
+    <div class="tm-header-menu-button js-header-menu-button icon-before icon-header-menu">
+    </div>
+    <div class="tm-header-menu hide js-header-menu" data-close-outside="js-header-menu-window">
+     <div class="tm-header-menu-close-button js-header-menu-close-button icon-before icon-header-menu-close">
+     </div>
+     <div class="tm-header-menu-window js-header-menu-window">
+      <div class="tm-header-menu-body">
+       <h4 class="tm-menu-subheader">
+        Platform
+       </h4>
+       <div class="tm-menu-links">
+        <a class="tm-menu-link icon-before icon-menu-about" href="/about">
+         About
+        </a>
+        <a class="tm-menu-link icon-before icon-menu-terms" href="/terms">
+         Terms
+        </a>
+        <a class="tm-menu-link icon-before icon-menu-privacy" href="/privacy">
+         Privacy Policy
+        </a>
+       </div>
+       <div class="tm-header-menu-footer">
+        <div class="tm-header-menu-footer-text">
+         Connect TON and Telegram
+         <br/>
+         to view your bids and assets
+        </div>
+        <button class="btn btn-primary btn-block tm-menu-button ton-auth-link">
+         <i class="icon icon-connect-ton">
+         </i>
+         <span class="tm-button-label">
+          Connect TON
+         </span>
+        </button>
+        <button class="btn btn-default btn-block tm-menu-button login-link">
+         <i class="icon icon-connect-telegram">
+         </i>
+         <span class="tm-button-label">
+          Connect Telegram
+         </span>
+        </button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </header>
+   <main class="tm-article">
+    <section class="tm-article-content">
+     <div class="" id="dev_page_content_wrap">
+      <div class="dev_page_bread_crumbs">
+      </div>
+      <h1 id="dev_page_title">
+       How does Fragment work?
+      </h1>
+      <div id="dev_page_content">
+       <p>
+        <a href="https://fragment.com">
+         Fragment
+        </a>
+        is a
+        <strong>
+         free platform
+        </strong>
+        which facilitates the transaction of collectibles between users and the purchase of services from third parties. It supports direct,
+        <strong>
+         secure
+        </strong>
+        and
+        <strong>
+         anonymous
+        </strong>
+        sales as well as
+        <strong>
+         public auctions
+        </strong>
+        where everyone can participate over a period of time.
+        <br/>
+        Fragment also facilitates your engagement with certain third party services, like purchasing Telegram Premium, Telegram Ads or the withdrawal of
+        <a href="https://telegram.org/blog/monetization-for-channels">
+         content creator rewards
+        </a>
+        .
+       </p>
+       <p>
+        To provide these services transparently, Fragment takes full advantage of
+        <a href="https://en.wikipedia.org/wiki/Telegram_Open_Network">
+         TON
+        </a>
+        , a blockchain technology initially developed by Telegram.
+       </p>
+       <p>
+        If you have used similar platforms before, go ahead and connect your Telegram account and your
+        <a href="https://ton.org/wallets">
+         TON wallet
+        </a>
+        to
+        <a href="https://fragment.com">
+         Fragment
+        </a>
+        , then open the relevant tab on our
+        <a href="https://fragment.com">
+         homepage
+        </a>
+        and proceed with your bid or purchase. If you are not familiar with these terms and don't know where to start, simply follow the handy
+        <a href="#how-to-pay">
+         tutorial
+        </a>
+        available below.
+       </p>
+       <h2>
+        <a class="anchor-link" href="#index">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="index">
+        </a>
+        Index
+       </h2>
+       <ul>
+        <li>
+         <a href="#how-to-pay">
+          How to Pay?
+         </a>
+        </li>
+        <li>
+         <a href="#telegram-ads">
+          Telegram Ads
+         </a>
+        </li>
+        <li>
+         <a href="#telegram-stars">
+          Telegram Stars
+         </a>
+        </li>
+        <li>
+         <a href="#telegram-premium">
+          Telegram Premium
+         </a>
+        </li>
+        <li>
+         <a href="#collectible-numbers">
+          Collectible Numbers
+         </a>
+        </li>
+        <li>
+         <a href="#collectible-usernames">
+          Collectible Usernames
+         </a>
+        </li>
+        <li>
+         <a href="#auctions-and-sales-of-collectibles">
+          Auctions and Sales
+         </a>
+        </li>
+       </ul>
+       <h2>
+        <a class="anchor-link" href="#how-to-pay">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="how-to-pay">
+        </a>
+        How to Pay?
+       </h2>
+       <p>
+        Fragment relies on
+        <a href="https://en.wikipedia.org/wiki/Telegram_Open_Network">
+         TON
+        </a>
+        blockchain technology for fast, secure and anonymous transactions, allowing you to exchange Toncoins for goods and services.
+       </p>
+       <p>
+        To make payments with Toncoin, you will need to
+        <a href="#creating-a-wallet">
+         set up a wallet
+        </a>
+        – think of it as an app that holds your funds and lets you interact with other users and apps on the TON blockchain, including Fragment. Once your wallet is set up, it can hold the
+        <a href="#depositing-funds">
+         Toncoin you purchase
+        </a>
+        , ready for you to spend on Fragment and similar exchanges.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#creating-a-wallet">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="creating-a-wallet">
+        </a>
+        Creating a Wallet
+       </h3>
+       <p>
+        Creating a wallet is very
+        <strong>
+         straightforward
+        </strong>
+        and will only take a couple minutes. First, install a TON Wallet such as
+        <a href="https://tonkeeper.com/">
+         TonKeeper
+        </a>
+        or
+        <a href="https://mytonwallet.io/">
+         MyTonWallet
+        </a>
+        (more wallets are listed
+        <a href="https://ton.org/wallets">
+         here
+        </a>
+        ).
+       </p>
+       <p>
+        You will be presented with a numbered list of words – this is the equivalent of your
+        <strong>
+         password
+        </strong>
+        and you
+        <strong>
+         must
+        </strong>
+        write it down or store it securely. Failure to do so
+        <strong>
+         will
+        </strong>
+        result in the irreversible loss of your wallet, funds and collectibles.
+       </p>
+       <blockquote>
+        <p>
+         With non-custodial wallets like TonKeeper or MyTonWallet nobody holds the keys to your funds but you. While this is very secure, it also means that if you lose the keys nobody will be able to help you restore them; be sure to
+         <strong>
+          back up your credentials
+         </strong>
+         .
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#depositing-funds">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="depositing-funds">
+        </a>
+        Depositing Funds
+       </h3>
+       <p>
+        Once your wallet is ready, you'll have to
+        <strong>
+         deposit funds
+        </strong>
+        in it. To deposit existing TON stored somewhere else (e.g. from a friend, family, etc.), open your wallet and look for a
+        <strong>
+         receive
+        </strong>
+        or
+        <strong>
+         deposit
+        </strong>
+        button, which should display a QR code – anyone can scan this code from their wallet app to send you funds.
+       </p>
+       <p>
+        If you
+        <strong>
+         do not own
+        </strong>
+        any TON, you will need to buy it. A list of reputable platforms and exchanges which offer this service is available
+        <a href="https://ton.org/buy-toncoin">
+         here
+        </a>
+        ; some of them may ask for a form of identification – this is to be expected as you will be exchanging funds.
+       </p>
+       <p>
+        No matter which platform you pick, be sure to insert
+        <strong>
+         your wallet address
+        </strong>
+        when you are prompted for one to deposit or withdraw your TON – if you don't insert the correct wallet address, your funds may be lost. For maximum safety, copy-paste your wallet address directly from the wallet app.
+       </p>
+       <blockquote>
+        <p>
+         Don't panic if your new funds don't appear immediately! Transactions usually happen within seconds, but may sometimes take longer. If you still don't see them after 30 minutes, check out the
+         <a href="#faq">
+          FAQ
+         </a>
+         section below.
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#connecting-to-fragment-and-telegram">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="connecting-to-fragment-and-telegram">
+        </a>
+        Connecting To Fragment and Telegram
+       </h3>
+       <p>
+        Once your funds show up in your
+        <strong>
+         wallet
+        </strong>
+        , open
+        <a href="https://fragment.com">
+         Fragment
+        </a>
+        and use the “Connect TON” button in the top-right corner, then select your wallet and follow the instructions to continue.
+       </p>
+       <p>
+        To use Fragment services related to Telegram, use the “Connect Telegram” widget – if you’re on mobile, you can find it by opening the burger menu in the top-right corner.
+       </p>
+       <blockquote>
+        <p>
+         Before you purchase, bid or interact with any services on Fragment, we recommend double checking that you
+         <strong>
+          connected the correct wallet
+         </strong>
+         – this includes making sure that you use the right wallet when prompted to scan additional QR codes to confirm transactions.
+        </p>
+       </blockquote>
+       <h2>
+        <a class="anchor-link" href="#telegram-ads">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="telegram-ads">
+        </a>
+        Telegram Ads
+       </h2>
+       <p>
+        The
+        <a href="https://ads.telegram.org/">
+         Telegram Ad Platform
+        </a>
+        allows advertisers to display ads on large public channels on Telegram. Eligible channel owners may receive a share of the revenue generated by ads displayed on their channels.
+       </p>
+       <p>
+        Fragment enables the purchase of ads on Telegram and the withdrawal of rewards for eligible owners of channels where they are displayed.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#purchasing-ads">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="purchasing-ads">
+        </a>
+        Purchasing Ads
+       </h3>
+       <p>
+        To purchase Ads for your bot or channel, you will first need to log in to
+        <a href="https://ads.telegram.org">
+         ads.telegram.org
+        </a>
+        and create your ad account. To deposit funds, you can select
+        <em>
+         Budget &gt; Add Funds
+        </em>
+        , which may redirect you to Fragment to complete the transaction.
+       </p>
+       <p>
+        If you haven’t already done so, you will need to
+        <a href="#creating-a-wallet">
+         connect your TON wallet
+        </a>
+        to Fragment. Then, simply enter the budget for your ad account in TON and tap
+        <em>
+         ‘Add Funds’
+        </em>
+        .
+       </p>
+       <h3>
+        <a class="anchor-link" href="#advertisement-revenue-sharing">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="advertisement-revenue-sharing">
+        </a>
+        Advertisement Revenue Sharing
+       </h3>
+       <p>
+        If you are the owner of a channel that participates in the Telegram
+        <a href="https://telegram.org/blog/monetization-for-channels">
+         advertisement revenue sharing
+        </a>
+        program, you can use Fragment to withdraw the rewards you’ve accrued.
+       </p>
+       <h2>
+        <a class="anchor-link" href="#telegram-stars">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="telegram-stars">
+        </a>
+        Telegram Stars
+       </h2>
+       <p>
+        Bot developers and content creators who receive
+        <a href="https://telegram.org/blog/telegram-stars">
+         Telegram Stars
+        </a>
+        in exchange for digital products, services, content or other perks can use Fragment to obtain rewards.
+       </p>
+       <blockquote>
+        <p>
+         Your engagement with
+         <a href="https://telegram.org/blog/telegram-stars">
+          Telegram Stars
+         </a>
+         is  subject to Telegram’s
+         <a href="https://telegram.org/tos/stars">
+          Terms of Service for Stars
+         </a>
+         ,
+         <a href="https://telegram.org/tos/bot-developers">
+          Bot Developers
+         </a>
+         and
+         <a href="https://telegram.org/tos/content-creator-rewards">
+          Content Creators
+         </a>
+         .
+        </p>
+       </blockquote>
+       <h2>
+        <a class="anchor-link" href="#telegram-premium">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="telegram-premium">
+        </a>
+        Telegram Premium
+       </h2>
+       <p>
+        Fragment allows Telegram users to
+        <a href="https://fragment.com/premium/gift">
+         purchase subscriptions
+        </a>
+        to or
+        <a href="https://fragment.com/premium/giveaway">
+         prepay for giveaways
+        </a>
+        of Telegram Premium.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#buy-telegram-premium">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="buy-telegram-premium">
+        </a>
+        Buy Telegram Premium
+       </h3>
+       <p>
+        You can buy Telegram Premium for yourself or gift it to a friend by selecting
+        <em>
+         ‘Buy Premium for a User’
+        </em>
+        from the
+        <a href="https://fragment.com/premium/">
+         Telegram Premium
+        </a>
+        page on Fragment.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#premium-giveaways">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="premium-giveaways">
+        </a>
+        Premium Giveaways
+       </h3>
+       <p>
+        Channels or groups looking to give away Telegram Premium subscriptions to their members can use Fragment to pay for the giveaway in TON.
+       </p>
+       <h2>
+        <a class="anchor-link" href="#collectible-numbers">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="collectible-numbers">
+        </a>
+        Collectible Numbers
+       </h2>
+       <p>
+        In late 2022, Telegram released a limited run of
+        <a href="https://fragment.com/numbers">
+         virtual phone numbers
+        </a>
+        as collectibles on the TON blockchain. Telegram users can use these numbers to
+        <a href="https://telegram.org/blog/ultimate-privacy-topics-2-0#sign-up-without-a-sim-card">
+         sign up without a SIM card
+        </a>
+        and receive their login codes directly on Fragment, rather than via SMS.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#obtaining-a-collectible-number">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="obtaining-a-collectible-number">
+        </a>
+        Obtaining a Collectible Number
+       </h3>
+       <p>
+        Collectible Numbers are a form of collectible – check out
+        <a href="#what-is-a-collectible">
+         this section
+        </a>
+        below to learn what a collectible is and how to purchase them. If you already own a collectible number, you can add and remove it from your Telegram account at will – and list it for auction or sale on Fragment.
+       </p>
+       <blockquote>
+        <p>
+         The direct sale of collectible numbers ended in 2022 – currently, the only way to acquire a collectible number is to purchase it from another user on Fragment.
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#creating-a-telegram-account-with-a-collectible-number">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="creating-a-telegram-account-with-a-collectible-number">
+        </a>
+        Creating a Telegram Account with a Collectible Number
+       </h3>
+       <p>
+        Once you obtain a Collectible Number, simply open your Telegram app and sign up by entering your number in the relevant text field. When prompted for an OTP,
+        <a href="#connecting-to-fragment-and-telegram">
+         connect your wallet
+        </a>
+        to Fragment and navigate to
+        <a href="https://fragment.com/my/numbers">
+         this page
+        </a>
+        to receive your login code.
+       </p>
+       <blockquote>
+        <p>
+         Note that these Collectible Numbers only work on Telegram – you cannot use them to call, send SMS or sign up to other services, unless such services choose to support them.
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#switching-to-a-collectible-number-on-telegram">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="switching-to-a-collectible-number-on-telegram">
+        </a>
+        Switching to a Collectible Number on Telegram
+       </h3>
+       <p>
+        Telegram users can update the phone number connected to their at any time from the Settings page of their Telegram
+        <a href="https://telegram.org/apps#mobile-apps">
+         mobile app
+        </a>
+        . To switch to a collectible number, simply enter the +888 number you’ve acquired, and when prompted for an OTP, check
+        <a href="https://fragment.com/my/numbers">
+         this page
+        </a>
+        on Fragment to receive your login code.
+       </p>
+       <h2>
+        <a class="anchor-link" href="#collectible-usernames">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="collectible-usernames">
+        </a>
+        Collectible Usernames
+       </h2>
+       <p>
+        Fragment supports the sale and exchange of
+        <a href="https://telegram.org">
+         Telegram
+        </a>
+        usernames – giving users the ability to securely acquire and sell catchy
+        <a href="#what-is-a-collectible">
+         collectible
+        </a>
+        usernames, as well as
+        <a href="#auctioning-basic-usernames">
+         convert existing usernames
+        </a>
+        on Telegram into collectibles.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#obtaining-a-collectible-username">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="obtaining-a-collectible-username">
+        </a>
+        Obtaining a Collectible Username
+       </h3>
+       <p>
+        You can acquire a collectible username through direct sales or
+        <a href="#bidding-ton">
+         open auctions
+        </a>
+        on Fragment. After completing a purchase or winning an auction, ownership of the username is transferred to the
+        <strong>
+         TON wallet
+        </strong>
+        you used to complete the purchase.
+       </p>
+       <blockquote>
+        <p>
+         If you already have an existing username on Telegram, you can
+         <a href="#listing-your-username-on-fragment">
+          convert it
+         </a>
+         to a collectible username to cement your ownership of it in the blockchain.
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#using-your-new-collectible-username">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="using-your-new-collectible-username">
+        </a>
+        Using your new collectible username
+       </h3>
+       <p>
+        After receiving a collectible, you can:
+       </p>
+       <ul>
+        <li>
+         <a href="#assigning-collectible-usernames-to-telegram">
+          Assign it on Telegram
+         </a>
+         . Any profile, group or channel can have
+         <a href="https://telegram.org/blog/topics-in-groups-collectible-usernames#collectible-usernames">
+          multiple collectible usernames
+         </a>
+         linking to it.
+        </li>
+        <li>
+         <a href="#putting-collectibles-up-for-auction">
+          Sell it or start a new auction
+         </a>
+         – without paying a
+         <a href="#q-what-39s-the-conversion-fee">
+          conversion fee
+         </a>
+         .
+        </li>
+        <li>
+         Securely transfer it to another person or wallet
+         <strong>
+          for free
+         </strong>
+         via your wallet app.
+        </li>
+       </ul>
+       <h3>
+        <a class="anchor-link" href="#assigning-collectible-usernames-to-telegram">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="assigning-collectible-usernames-to-telegram">
+        </a>
+        Assigning Collectible Usernames to Telegram
+       </h3>
+       <p>
+        You can assign
+        <strong>
+         collectible usernames
+        </strong>
+        to your personal Telegram
+        <strong>
+         profile
+        </strong>
+        or to Telegram public
+        <strong>
+         groups
+        </strong>
+        and
+        <strong>
+         channels
+        </strong>
+        you own. Any of these entities can have up to
+        <strong>
+         one
+        </strong>
+        basic username and
+        <strong>
+         any number
+        </strong>
+        of collectible usernames – you can also customize the order in which collectibles appear in the chat's info page, or toggle them off entirely.
+       </p>
+       <blockquote>
+        <p>
+         You can also upgrade collectible usernames to assign them to
+         <strong>
+          Telegram bots
+         </strong>
+         . To upgrade, assign the username to a bot and pay a one-time fee.
+        </p>
+       </blockquote>
+       <p>
+        Note that before you can assign a username, you must connect both your
+        <strong>
+         Telegram account
+        </strong>
+        and
+        <strong>
+         TON wallet
+        </strong>
+        to Fragment. To do so, follow the instructions available
+        <a href="#connecting-to-fragment-and-telegram">
+         here
+        </a>
+        .
+       </p>
+       <p>
+        The wallet you are connecting must be the one currently holding your collectible – if you don't see any items in your wallet please check our
+        <a href="#q-i-won-an-auction-but-can-39t-see-the-collectible-in-my-assets">
+         FAQ
+        </a>
+        .
+       </p>
+       <blockquote>
+        <p>
+         Fragment
+         <strong>
+          doesn't store
+         </strong>
+         any information that could tie your wallet to your Telegram account.
+        </p>
+       </blockquote>
+       <h4>
+        <a class="anchor-link" href="#assigning-your-collectible">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="assigning-your-collectible">
+        </a>
+        Assigning your collectible
+       </h4>
+       <p>
+        Open the
+        <a href="/my/assets">
+         My Assets
+        </a>
+        page and tap on '
+        <em>
+         Assign to Telegram
+        </em>
+        ', then select a chat and tap '
+        <em>
+         Assign
+        </em>
+        ' to confirm your choice.
+       </p>
+       <blockquote>
+        <p>
+         This choice is not permanent, you can pick another chat at any time.
+        </p>
+       </blockquote>
+       <h4>
+        <a class="anchor-link" href="#activating-your-collectible-on-telegram">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="activating-your-collectible-on-telegram">
+        </a>
+        Activating your collectible on Telegram
+       </h4>
+       <p>
+        Once your collectible has been assigned, it will not redirect to your designated chat right away. To activate and list it in the public info page of your chat, you have to
+        <strong>
+         manually enable it
+        </strong>
+        .
+       </p>
+       <p>
+        To do so, follow these simple steps:
+       </p>
+       <ul>
+        <li>
+         <p>
+          <strong>
+           Personal Profile
+          </strong>
+          : Settings &gt; Username &gt; Enable and sort the available usernames as needed.
+         </p>
+        </li>
+        <li>
+         <p>
+          <strong>
+           Public Group
+          </strong>
+          : Open your group settings ( ⋮
+          <em>
+           Android
+          </em>
+          , '…'
+          <em>
+           iOS
+          </em>
+          ) &gt; Group Type &gt; '
+          <em>
+           Links order
+          </em>
+          ' &gt; Tap on your collectible to enable it.
+         </p>
+        </li>
+        <li>
+         <p>
+          <strong>
+           Public Channel
+          </strong>
+          : Open your channel settings ⋮
+          <em>
+           Android
+          </em>
+          , '…'
+          <em>
+           iOS
+          </em>
+          ) &gt; Channel Type &gt; '
+          <em>
+           Links order
+          </em>
+          ' &gt; Tap on your collectible to enable it.
+         </p>
+        </li>
+       </ul>
+       <blockquote>
+        <p>
+         Older Telegram clients may not show any username beyond the first on the info page of your chats.
+        </p>
+       </blockquote>
+       <h2>
+        <a class="anchor-link" href="#auctions-and-sales-of-collectibles">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="auctions-and-sales-of-collectibles">
+        </a>
+        Auctions and Sales of Collectibles
+       </h2>
+       <h3>
+        <a class="anchor-link" href="#what-is-a-collectible">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="what-is-a-collectible">
+        </a>
+        What is a Collectible
+       </h3>
+       <p>
+        A
+        <strong>
+         collectible
+        </strong>
+        is a unique item (e.g. a username, virtual phone number, etc.) that is
+        <strong>
+         permanently recorded
+        </strong>
+        on the public TON blockchain as property owned by the holder of the corresponding address. TON offers a free, distributed and secure interface for developers to integrate collectibles into their platforms.
+       </p>
+       <p>
+        Once you obtain a collectible, it is yours
+        <strong>
+         forever
+        </strong>
+        and you are free to show it off, sell it, or take advantage of the features it unlocks. The unique functionalities tied to collectibles will depend on how each platform chooses to support them.
+       </p>
+       <blockquote>
+        <p>
+         Other services are free to integrate collectibles to unlock cross-platform, permanent perks for their users.
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#how-can-i-purchase-collectibles">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="how-can-i-purchase-collectibles">
+        </a>
+        How can I purchase collectibles?
+       </h3>
+       <p>
+        You can purchase a collectible on
+        <a href="https://fragment.com">
+         Fragment
+        </a>
+        by exchanging it with a currency called
+        <strong>
+         Toncoin
+        </strong>
+        – the amount you need will depend on what the current highest bid is, just like any other auction.
+       </p>
+       <p>
+        To use this currency you must first
+        <a href="#creating-a-wallet">
+         create a secure wallet
+        </a>
+        to store it,
+        <a href="#depositing-funds">
+         deposit new funds
+        </a>
+        in it and finally
+        <a href="#connecting-to-fragment-and-telegram">
+         connect it to Fragment
+        </a>
+        .
+       </p>
+       <blockquote>
+        <p>
+         If you're running into any issue while following this tutorial, check out the
+         <a href="#faq">
+          FAQ
+         </a>
+         section below.
+        </p>
+       </blockquote>
+       <h4>
+        <a class="anchor-link" href="#bidding-ton">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="bidding-ton">
+        </a>
+        Bidding TON
+       </h4>
+       <p>
+        After connecting to Fragment, you're all set and ready to bid on
+        <strong>
+         any available collectible
+        </strong>
+        . To do so, tap on one of the available auctions, enter an amount, confirm it and pay via your wallet – just like you did when you were connecting it to Fragment.
+       </p>
+       <p>
+        During bidding, whoever’s bid is first to the blockchain will get the bid at that price. If your bid wasn’t reflected in the blockchain before the auction ends, you will get the money back and lose the bid. Likewise, if someone outbids you, your money will be returned to you.
+       </p>
+       <blockquote>
+        <p>
+         Usernames listed as
+         <em>
+          Taken
+         </em>
+         are currently in use and not available for sale. However, you can pay a
+         <strong>
+          small fee
+         </strong>
+         to
+         <a href="#why-is-the-collectible-i-want-marked-as-unavailable">
+          notify their owner
+         </a>
+         that you are interested in acquiring the name. To do so, search for the username on Fragment, open its page and tap on '
+         <em>
+          Make an offer
+         </em>
+         '.
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#putting-collectibles-up-for-auction">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="putting-collectibles-up-for-auction">
+        </a>
+        Putting Collectibles Up For Auction
+       </h3>
+       <p>
+        If you own a collectible, you are free to either sell it directly or auction it to the public at any time. To do so, tap on
+        <a href="/my/assets">
+         My Assets
+        </a>
+        and select either
+        <em>
+         Put up for auction
+        </em>
+        or
+        <em>
+         Sell
+        </em>
+        depending on what you want to do.
+       </p>
+       <blockquote>
+        <p>
+         If you decide to auction one of your unique items (e.g., usernames, phone numbers, etc.), remember that you can set an optional
+         <strong>
+          maximum price
+         </strong>
+         which, if paid, will immediately end the auction. Note that collectibles are subject to a
+         <strong>
+          5% platform fee
+         </strong>
+         on each transaction.
+        </p>
+       </blockquote>
+       <h4>
+        <a class="anchor-link" href="#auctioning-basic-usernames">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="auctioning-basic-usernames">
+        </a>
+        Auctioning Basic Usernames
+       </h4>
+       <p>
+        Any basic username from your Telegram account can be
+        <a href="#listing-your-username-on-fragment">
+         auctioned on Fragment
+        </a>
+        , including those that are linked to your
+        <strong>
+         profile
+        </strong>
+        ,
+        <strong>
+         public groups
+        </strong>
+        or
+        <strong>
+         public channels
+        </strong>
+        .
+       </p>
+       <p>
+        Interested buyers can
+        <strong>
+         place a bid
+        </strong>
+        to
+        <strong>
+         start an auction
+        </strong>
+        at any time –
+        <a href="#when-the-auction-ends">
+         when the auction ends
+        </a>
+        , the basic username will be
+        <strong>
+         converted
+        </strong>
+        into a collectible and assigned to the winner.
+       </p>
+       <p>
+        The original owner of the basic username will
+        <strong>
+         earn
+        </strong>
+        all proceeds
+        <a href="#q-are-there-any-transaction-fees">
+         minus applicable fees
+        </a>
+        . They may also try to win the auction themselves to retain ownership of the new collectible.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#listing-your-username-on-fragment">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="listing-your-username-on-fragment">
+        </a>
+        Listing your username on Fragment
+       </h4>
+       <p>
+        If you own a
+        <strong>
+         basic username
+        </strong>
+        on
+        <strong>
+         Telegram
+        </strong>
+        and wish to make it available on Fragment, simply:
+       </p>
+       <ul>
+        <li>
+         <a href="#connecting-to-fragment-and-telegram">
+          Log in
+         </a>
+         to Fragment with both your Telegram and TON accounts.
+        </li>
+        <li>
+         The TON wallet you've connected will receive the proceeds from the auction, so make sure to connect a wallet that you own.
+        </li>
+        <li>
+         Tap on your TON wallet in the top right corner and choose
+         <a href="/convert">
+          'Convert to Collectibles'
+         </a>
+         (or follow the 'Convert Usernames to Collectibles' link in 'My Assets').
+        </li>
+        <li>
+         Select a username from the list. Note that to prevent abuse, usernames you acquired or reassigned (i.e., moved it from your profile to a channel you own, etc.) very recently may not be immediately available.
+        </li>
+        <li>
+         Set a minimum bid. Buyers will have to pay at least this amount to acquire the collectible.
+        </li>
+       </ul>
+       <p>
+        After confirming, your username will remain available for auction for an
+        <strong>
+         unlimited time
+        </strong>
+        – interested buyers, including yourself, can
+        <strong>
+         place the first bid
+        </strong>
+        to start a
+        <strong>
+         7-day auction
+        </strong>
+        .
+       </p>
+       <blockquote>
+        <p>
+         While a username is available for auction, you can't
+         <strong>
+          reassign
+         </strong>
+         it to a
+         <em>
+          different
+         </em>
+         chat or profile (but you can
+         <em>
+          remove
+         </em>
+         it to protect privacy, or
+         <strong>
+          restore
+         </strong>
+         it in the same place). You can
+         <a href="#canceling-an-auction">
+          cancel
+         </a>
+         the auction to reassign the username elsewhere.
+        </p>
+       </blockquote>
+       <h4>
+        <a class="anchor-link" href="#canceling-an-auction">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="canceling-an-auction">
+        </a>
+        Canceling an auction
+       </h4>
+       <p>
+        You can cancel the auction at any time
+        <strong>
+         before the first bid
+        </strong>
+        is placed. If you do so, you will keep the basic username and it will
+        <strong>
+         not be converted
+        </strong>
+        into a collectible.
+       </p>
+       <p>
+        After the first bid is placed, the auction can no longer be canceled.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#when-the-auction-ends">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="when-the-auction-ends">
+        </a>
+        When the auction ends
+       </h4>
+       <p>
+        When the auction
+        <strong>
+         ends
+        </strong>
+        you will
+        <strong>
+         earn
+        </strong>
+        all proceeds minus
+        <a href="#q-are-there-any-transaction-fees">
+         applicable fees
+        </a>
+        . The outcome may slightly differ depending on the winner:
+       </p>
+       <ul>
+        <li>
+         <strong>
+          If someone else wins
+         </strong>
+         - The wallet they used to place the highest bid will receive the collectible. All proceeds minus a 5% platform fee and one-time conversion fee will be transferred to the wallet that you connected to Fragment when
+         <a href="#listing-your-username-on-fragment">
+          listing
+         </a>
+         your username.
+        </li>
+        <li>
+         <strong>
+          If you win the auction
+         </strong>
+         - You will
+         <strong>
+          own the collectible
+         </strong>
+         , the wallet you used to place the highest bid will receive it. You will also get your winning bid back, minus a 5%
+         <a href="#">
+          platform fee
+         </a>
+         and one-time
+         <a href="#q-what-39s-the-conversion-fee">
+          conversion fee
+         </a>
+         .
+        </li>
+       </ul>
+       <p>
+        The username will
+        <strong>
+         continue
+        </strong>
+        to link to the same chat until it is reassigned. Outdated apps may not display it in the info panel – make sure to always update your app to the latest version.
+       </p>
+       <h2>
+        <a class="anchor-link" href="#faq">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="faq">
+        </a>
+        FAQ
+       </h2>
+       <p>
+        This is a list of frequently asked questions on Fragment and Telegram collectibles.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-deposited-some-money-but-my-wallet-is-empty-what-happened">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-deposited-some-money-but-my-wallet-is-empty-what-happened">
+        </a>
+        Q: I deposited some money but my wallet is empty, what happened?
+       </h4>
+       <p>
+        Not to worry, this is likely due to one of the following reasons:
+       </p>
+       <ul>
+        <li>
+         You did not wait long enough – most transactions take a few seconds, but some might take 30 minutes or more.
+        </li>
+        <li>
+         You are looking in the wrong place, funds will not appear directly on Fragment, they're only visible in your
+         <strong>
+          TON wallet
+         </strong>
+         .
+        </li>
+        <li>
+         You have selected the wrong wallet within your wallet app. On some wallets, one “account” can contain several wallets (ie., wallet versions); to fix this, open your wallet settings and look for “Versions”, “Wallets” or similar labels, then rotate through them until you find the one with your funds.
+        </li>
+        <li>
+         Your transaction didn't go through – check with your bank or credit card, as some may deny unusual purchases automatically.
+        </li>
+       </ul>
+       <h4>
+        <a class="anchor-link" href="#q-are-there-any-transaction-fees">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-are-there-any-transaction-fees">
+        </a>
+        Q: Are there any transaction fees?
+       </h4>
+       <p>
+        Collectibles are subject to a
+        <strong>
+         5% platform fee
+        </strong>
+        on each sale (direct sales and the highest bid when an auction ends). Transactions may also be subject to small
+        <strong>
+         blockchain fees
+        </strong>
+        (~1 Toncoin) that are outside Fragment's control.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-lost-my-wallet-can-fragment-recover-it">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-lost-my-wallet-can-fragment-recover-it">
+        </a>
+        Q: I lost my wallet, can Fragment recover it?
+       </h4>
+       <p>
+        Fragment is not able to restore wallets as it never stores or comes into contact with private credentials. Wallets are strictly private and it is the responsibility of the owner to ensure that the recovery keys are properly stored.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-how-can-i-log-in-to-fragment-with-a-different-telegram-account">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-how-can-i-log-in-to-fragment-with-a-different-telegram-account">
+        </a>
+        Q: How can I log in to Fragment with a different Telegram account?
+       </h4>
+       <p>
+        To fully disconnect your Telegram account from Fragment and log in with another phone number, simply open your Telegram app and navigate to:
+       </p>
+       <ul>
+        <li>
+         <strong>
+          Android
+         </strong>
+         :
+         <em>
+          Settings
+         </em>
+         &gt;
+         <em>
+          Privacy &amp; Security
+         </em>
+         &gt;
+         <em>
+          Bots and websites
+         </em>
+         &gt;
+         <em>
+          Logged in with Telegram
+         </em>
+        </li>
+        <li>
+         <strong>
+          iOS
+         </strong>
+         :
+         <em>
+          Settings
+         </em>
+         &gt;
+         <em>
+          Privacy &amp; Security
+         </em>
+         &gt;
+         <em>
+          Active Websites
+         </em>
+         &gt;
+         <em>
+          Logged in with Telegram
+         </em>
+        </li>
+       </ul>
+       <p>
+        Once there, remove your Fragment session and reopen the website to
+        <a href="#connecting-to-fragment-and-telegram">
+         connect
+        </a>
+        a different Telegram account.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#telegram-ads">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="telegram-ads">
+        </a>
+        Telegram Ads
+       </h3>
+       <h4>
+        <a class="anchor-link" href="#q-why-am-i-unable-to-purchase-ads">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-why-am-i-unable-to-purchase-ads">
+        </a>
+        Q: Why am I unable to purchase Ads?
+       </h4>
+       <p>
+        Users from certain countries may currently be restricted from purchasing Ads on Telegram, as per Telegram's policies. Fragment only facilitates the purchase of Telegram Ads and cannot modify the list of supported countries.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-where-can-i-set-up-the-ads-i-purchased">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-where-can-i-set-up-the-ads-i-purchased">
+        </a>
+        Q: Where can I set up the Ads I purchased?
+       </h4>
+       <p>
+        Fragment only facilitates the purchase of Telegram Ads – to access all Ad settings and create Sponsored Messages (Telegram Ads), you need to log in to Telegram’s official
+        <a href="https://ads.telegram.org/">
+         Ad Platform
+        </a>
+        .
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-why-am-i-unable-to-purchase-telegram-premium">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-why-am-i-unable-to-purchase-telegram-premium">
+        </a>
+        Q: Why am I unable to purchase Telegram Premium?
+       </h4>
+       <p>
+        Users from certain countries may currently be restricted from purchasing Telegram Premium on Fragment, either for their account or for someone else, as per Telegram's policies. Fragment only facilitates the purchase of Telegram Premium and cannot modify the list of supported countries.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-purchased-telegram-premium-for-the-wrong-account-can-you-tra">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-purchased-telegram-premium-for-the-wrong-account-can-you-tra">
+        </a>
+        Q: I purchased Telegram Premium for the wrong account, can you transfer it?
+       </h4>
+       <p>
+        Unfortunately, all purchases on Fragment are final, and we are not able to make any changes, asset transfers or refunds after the transaction has been successfully registered on the blockchain.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-why-is-my-premium-subscription-not-showing-up-on-telegram">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-why-is-my-premium-subscription-not-showing-up-on-telegram">
+        </a>
+        Q: Why is my Premium subscription not showing up on Telegram?
+       </h4>
+       <p>
+        After purchasing a subscription for your account on Fragment, it may take several minutes for it to appear in your Telegram app. If 30 minutes have passed and you still don’t see it, please contact Telegram’s in-app support by opening your Telegram settings and tapping on “Ask a Question”.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#collectible-numbers">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="collectible-numbers">
+        </a>
+        Collectible Numbers
+       </h3>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-buy-a-collectible-number-directly-from-telegram">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-buy-a-collectible-number-directly-from-telegram">
+        </a>
+        Q: Can I buy a collectible number directly from Telegram?
+       </h4>
+       <p>
+        No, you can only buy existing numbers that other users are willing to sell.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-use-collectible-numbers-to-receive-sms-and-phone-calls">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-use-collectible-numbers-to-receive-sms-and-phone-calls">
+        </a>
+        Q: Can I use collectible numbers to receive SMS and phone calls?
+       </h4>
+       <p>
+        No, collectible numbers work only on Telegram, they cannot receive regular SMS or phone calls.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-use-collectible-numbers-to-sign-up-to-other-platforms">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-use-collectible-numbers-to-sign-up-to-other-platforms">
+        </a>
+        Q: Can I use collectible numbers to sign up to other platforms?
+       </h4>
+       <p>
+        No, collectible numbers can only be used to sign up and log in to Telegram.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-can-an-existing-telegram-account-change-its-connected-phone-nu">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-an-existing-telegram-account-change-its-connected-phone-nu">
+        </a>
+        Q: Can an existing Telegram account change its connected phone number to a Collectible Number?
+       </h4>
+       <p>
+        Yes, any existing Telegram account can
+        <a href="https://telegram.org/faq#q-how-do-i-change-my-phone-number">
+         change its number
+        </a>
+        to any collectible number that is not already connected to a Telegram account. Collectible numbers can also be used to
+        <strong>
+         create a new account
+        </strong>
+        without a SIM card.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#collectible-usernames">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="collectible-usernames">
+        </a>
+        Collectible Usernames
+       </h3>
+       <h4>
+        <a class="anchor-link" href="#q-why-is-the-collectible-username-i-want-marked-as-unavailable">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-why-is-the-collectible-username-i-want-marked-as-unavailable">
+        </a>
+        Q: Why is the collectible username I want marked as unavailable?
+       </h4>
+       <p>
+        Some collectibles may be reserved and will become available at a later date. Others could have been bought before you.
+       </p>
+       <p>
+        Basic Telegram usernames that are currently in use are marked as
+        <em>
+         taken
+        </em>
+        . Fragment lets you make anonymous offers to the username owner, who can choose to
+        <a href="#auctioning-basic-usernames">
+         make it available for purchase
+        </a>
+        at any time.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-assign-my-collectible-username-to-a-bot">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-assign-my-collectible-username-to-a-bot">
+        </a>
+        Q: Can I assign my collectible username to a bot?
+       </h4>
+       <p>
+        You can upgrade your collectible username to assign it to a
+        <strong>
+         Telegram bot
+        </strong>
+        . To upgrade, assign the username to a bot on Fragment like you would for any other account and pay the one-time fee when prompted.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-assign-my-upgraded-username-to-a-different-bot">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-assign-my-upgraded-username-to-a-different-bot">
+        </a>
+        Q: Can I assign my upgraded username to a different bot?
+       </h4>
+       <p>
+        Yes, upgrading a collectible username is
+        <strong>
+         permanent
+        </strong>
+        . You can freely trade your upgraded collectible or assign it to a different bot – it will never lose its upgraded status even if it changes owners.
+       </p>
+       <h3>
+        <a class="anchor-link" href="#basic-usernames">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="basic-usernames">
+        </a>
+        Basic Usernames
+       </h3>
+       <h4>
+        <a class="anchor-link" href="#q-i-own-a-basic-telegram-username-but-cannot-put-it-up-for-aucti">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-own-a-basic-telegram-username-but-cannot-put-it-up-for-aucti">
+        </a>
+        Q: I own a basic Telegram username but cannot put it up for auction, why?
+       </h4>
+       <p>
+        When Telegram
+        <strong>
+         denies
+        </strong>
+        Fragment's request to auction a basic username, it is likely due to one of the following reasons:
+       </p>
+       <ul>
+        <li>
+         You did not set up a
+         <a href="https://t.me/TelegramTips/67">
+          2FA password
+         </a>
+         on your Telegram account, or you set it up too recently.
+        </li>
+        <li>
+         You haven't owned that username for a sufficiently long period of time.
+        </li>
+        <li>
+         The username has been recently moved (e.g. from your account to one of your channels, etc.).
+        </li>
+        <li>
+         Telegram has other reasons to believe you might be acting in bad faith.
+        </li>
+       </ul>
+       <h4>
+        <a class="anchor-link" href="#q-i-put-my-basic-username-up-for-auction-but-i-changed-my-mind-c">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-put-my-basic-username-up-for-auction-but-i-changed-my-mind-c">
+        </a>
+        Q: I put my basic username up for auction but I changed my mind, can I take it back?
+       </h4>
+       <p>
+        You can
+        <a href="#canceling-an-auction">
+         cancel
+        </a>
+        the auction
+        <strong>
+         before the first bid is placed
+        </strong>
+        . After the first bid, the auction starts and cannot be canceled.
+       </p>
+       <p>
+        Likewise, the conversion of a basic username into a collectible is
+        <strong>
+         permanent
+        </strong>
+        and cannot be reversed after the first bid is placed.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-auctioned-my-basic-username-and-nobody-bid-on-it-why-wasn-39">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-auctioned-my-basic-username-and-nobody-bid-on-it-why-wasn-39">
+        </a>
+        Q: I auctioned my basic username and nobody bid on it, why wasn't it assigned to me?
+       </h4>
+       <p>
+        The collectible was assigned to the wallet that placed the highest bid during the auction. This
+        <strong>
+         can be different
+        </strong>
+        from the wallet you connected to Fragment. If nobody else participated in the auction, you will find the collectible in the wallet you had connected to Fragment when the username was first made available for auction.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-what-39s-the-conversion-fee">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-what-39s-the-conversion-fee">
+        </a>
+        Q: What's the conversion fee?
+       </h4>
+       <p>
+        Owners of basic usernames can
+        <a href="#auctioning-basic-usernames">
+         auction them
+        </a>
+        on Fragment –
+        <strong>
+         converting the usernames
+        </strong>
+        into collectibles. A flat
+        <strong>
+         conversion fee
+        </strong>
+        of
+        <strong>
+         5
+        </strong>
+        Toncoins is deducted from the proceeds of this initial auction.
+       </p>
+       <blockquote>
+        <p>
+         This fee is collected
+         <strong>
+          only once
+         </strong>
+         . All future sales for a collectible are only subject to the
+         <a href="#q-are-there-any-transaction-fees">
+          5% platform fee
+         </a>
+         and necessary blockchain fees.
+        </p>
+       </blockquote>
+       <h3>
+        <a class="anchor-link" href="#anonymous-offers-for-basic-usernames">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="anonymous-offers-for-basic-usernames">
+        </a>
+        Anonymous Offers for Basic Usernames
+       </h3>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-suggest-someone-to-sell-their-username-on-fragment">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-suggest-someone-to-sell-their-username-on-fragment">
+        </a>
+        Q: Can I suggest someone to sell their username on Fragment?
+       </h4>
+       <p>
+        Fragment allows users to make offers for basic Telegram usernames in exchange for a small fee – all offers are forwarded
+        <strong>
+         anonymously
+        </strong>
+        from buyer to seller and neither party is made aware of any identifying information (e.g., Telegram id, username, etc.).
+       </p>
+       <blockquote>
+        <p>
+         Note that everyone will see which TON wallet made the offer.
+        </p>
+       </blockquote>
+       <h4>
+        <a class="anchor-link" href="#q-i-made-an-offer-for-a-username-marked-as-taken-what-happens-no">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-made-an-offer-for-a-username-marked-as-taken-what-happens-no">
+        </a>
+        Q: I made an offer for a username marked as
+        <em>
+         ’Taken’
+        </em>
+        . What happens now?
+       </h4>
+       <p>
+        Making an offer for a username marked as
+        <em>
+         ’Taken’
+        </em>
+        requires a small non-refundable fee to show that your offer is serious and not meant to bother the username owner. The amount you enter in ‘How much would you pay?’ is
+        <strong>
+         not binding
+        </strong>
+        and you will not be obligated to pay that price if the name becomes available for auction.
+       </p>
+       <p>
+        Following your offer, the owner can make the name available for purchase on Fragment via a
+        <a href="#auctioning-basic-usernames">
+         public auction
+        </a>
+        – they are free to choose any
+        <strong>
+         minimum bid
+        </strong>
+        . Anyone will be able to bid for the username, and you are free to participate in the auction to acquire the name.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-will-i-be-notified-if-the-username-becomes-available-for-aucti">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-will-i-be-notified-if-the-username-becomes-available-for-aucti">
+        </a>
+        Q: Will I be notified if the username becomes available for auction?
+       </h4>
+       <p>
+        If you were
+        <a href="https://fragment.com/about#connecting-to-fragment-and-telegram">
+         logged in with your Telegram account
+        </a>
+        on Fragment when you made your offer, you will be automatically subscribed to updates about the username.
+       </p>
+       <p>
+        If you were not logged in, you can always
+        <a href="https://fragment.com/about#connecting-to-fragment-and-telegram">
+         log in
+        </a>
+        , open the page of the desired username and tap
+        <strong>
+         'Subscribe to updates'
+        </strong>
+        .
+       </p>
+       <h3>
+        <a class="anchor-link" href="#auctions-and-sales-of-collectibles">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="auctions-and-sales-of-collectibles">
+        </a>
+        Auctions and Sales of Collectibles
+       </h3>
+       <h4>
+        <a class="anchor-link" href="#q-i-won-an-auction-how-do-i-use-my-new-collectible">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-won-an-auction-how-do-i-use-my-new-collectible">
+        </a>
+        Q: I won an auction, how do I use my new collectible?
+       </h4>
+       <p>
+        Tap on
+        <a href="/my/assets">
+         My Assets
+        </a>
+        to see all your collectibles – you can freely sell them, put them up for auction or
+        <a href="#assigning-collectible-usernames-to-telegram">
+         use them on Telegram
+        </a>
+        .
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-transfer-my-collectible-to-someone">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-transfer-my-collectible-to-someone">
+        </a>
+        Q: Can I transfer my collectible to someone?
+       </h4>
+       <p>
+        Fragment hosts
+        <a href="#putting-collectibles-up-for-auction">
+         open sales and auctions
+        </a>
+        of collectibles, but any owner can transfer a collectible to someone else
+        <strong>
+         for free
+        </strong>
+        via the TON blockchain. For example, the 'NFT' tab in
+        <strong>
+         Tonkeeper
+        </strong>
+        allows you to transfer collectibles to another address, and the same functionality is available in several other TON wallets.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-won-an-auction-but-can-39t-see-the-collectible-in-my-assets">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-won-an-auction-but-can-39t-see-the-collectible-in-my-assets">
+        </a>
+        Q: I won an auction but can't see the collectible in my assets. What happened?
+       </h4>
+       <p>
+        This technology relies on a distributed network, transactions can take some time. Most transactions will only take seconds, but please allow up to 30 minutes for your collectibles to appear.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-assigned-a-collectible-but-can-39t-see-it-on-telegram-why">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-assigned-a-collectible-but-can-39t-see-it-on-telegram-why">
+        </a>
+        Q: I assigned a collectible but can't see it on Telegram, why?
+       </h4>
+       <p>
+        This is likely due to one of the following reasons:
+       </p>
+       <ul>
+        <li>
+         You did not
+         <a href="#activating-your-collectible-on-telegram">
+          enable the collectible
+         </a>
+         on Telegram – this
+         <strong>
+          is not
+         </strong>
+         the same as assigning it on Fragment, it's a separate step.
+        </li>
+        <li>
+         You are using an outdated client that doesn't support collectibles - please
+         <strong>
+          update
+         </strong>
+         your app to version
+         <strong>
+          9.1
+         </strong>
+         or above.
+        </li>
+        <li>
+         You are looking at a cached or outdated menu, please try fully
+         <strong>
+          closing
+         </strong>
+         and
+         <strong>
+          reopening
+         </strong>
+         your app.
+        </li>
+       </ul>
+       <h4>
+        <a class="anchor-link" href="#q-will-i-lose-my-collectibles-if-i-lose-my-phone-account-session">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-will-i-lose-my-collectibles-if-i-lose-my-phone-account-session">
+        </a>
+        Q: Will I lose my collectibles if I lose my phone/account/session/phone number?
+       </h4>
+       <p>
+        <strong>
+         No
+        </strong>
+        , as long as you safely store the backup credentials (i.e. word list) of your TON wallet, your collectibles will
+        <strong>
+         always be safe
+        </strong>
+        and you can reassign them to a new Telegram account at any time. This is also true for any platform supporting the collectibles.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-are-my-collectibles-tied-to-any-specific-platform">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-are-my-collectibles-tied-to-any-specific-platform">
+        </a>
+        Q: Are my collectibles tied to any specific platform?
+       </h4>
+       <p>
+        <strong>
+         No
+        </strong>
+        , as long as you safely store the backup credentials (i.e. word list) of your TON wallet, your collectibles will
+        <strong>
+         always be safe
+        </strong>
+        regardless of which platform you use them on.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-can-i-integrate-collectibles-into-my-own-platform">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-can-i-integrate-collectibles-into-my-own-platform">
+        </a>
+        Q: Can I integrate collectibles into my own platform?
+       </h4>
+       <p>
+        <strong>
+         Yes
+        </strong>
+        , the TON blockchain is publicly accessible and anyone is free to reference collectibles or use them within their own platform.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-bought-a-collectible-but-now-i-39d-like-to-buy-a-better-one">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-bought-a-collectible-but-now-i-39d-like-to-buy-a-better-one">
+        </a>
+        Q: I bought a collectible but now I'd like to buy a better one, can Fragment replace it?
+       </h4>
+       <p>
+        All purchases are final since ownership is permanently fixed in the blockchain, however, nothing prevents buyers from purchasing multiple collectibles.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-what-happens-if-somebody-places-a-higher-bid-than-me">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-what-happens-if-somebody-places-a-higher-bid-than-me">
+        </a>
+        Q: What happens if somebody places a higher bid than me?
+       </h4>
+       <p>
+        If somebody places a higher bid your Toncoins will be refunded automatically. Funds will normally reappear in your wallet within a few seconds, but this may sometimes take longer due to the nature of the blockchain network.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-have-the-highest-bid-in-an-active-auction-but-would-like-to">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-have-the-highest-bid-in-an-active-auction-but-would-like-to">
+        </a>
+        Q: I have the highest bid in an active auction but would like to place an even higher bid. Will I lose my funds?
+       </h4>
+       <p>
+        <strong>
+         No,
+        </strong>
+        any time someone (including yourself) outbids you, your previous bid will be refunded immediately.
+       </p>
+       <h4>
+        <a class="anchor-link" href="#q-i-sold-my-collectible-but-i-want-it-back-can-fragment-revert-t">
+         <i class="anchor-icon">
+         </i>
+        </a>
+        <a class="anchor" name="q-i-sold-my-collectible-but-i-want-it-back-can-fragment-revert-t">
+        </a>
+        Q: I sold my collectible but I want it back. Can Fragment revert the transaction?
+       </h4>
+       <p>
+        Transactions are permanent – this secures your entities but also means that once a purchase is finalized it cannot be undone. Of course, you are free to buy back the collectible from its new owner, if they agree.
+       </p>
+      </div>
+     </div>
+    </section>
+   </main>
+   <footer class="tm-footer">
+    <div class="tm-footer-links">
+     <a class="tm-footer-link" href="/">
+      Top Auctions
+     </a>
+     <a class="tm-footer-link" href="/about">
+      About
+     </a>
+     <a class="tm-footer-link" href="/terms">
+      Terms
+     </a>
+     <a class="tm-footer-link" href="/privacy">
+      Privacy
+     </a>
+    </div>
+   </footer>
+  </div>
+  <script src="js/jquery.min.js">
+  </script>
+  <script src="js/bootstrap.min.js">
+  </script>
+  <script src="js/main-aj.js">
+  </script>
+  <script src="js/jquery-ex.js">
+  </script>
+  <script src="js/jquery-ui.min.js">
+  </script>
+  <script src="js/qr-code-styling.js">
+  </script>
+  <script src="js/tonconnect-ui.min.js">
+  </script>
+  <script src="js/auction.js">
+  </script>
+  <script src="js/tgsticker.js">
+  </script>
+  <script src="js/telegram-login.js">
+  </script>
+  <script>
+   ajInit({"version":598,"apiUrl":"\/api?hash=835c431984a2f33d77","unauth":true,"state":{"tonRate":1.96548311}});
+  </script>
+  <script id="aj_script">
+   Aj._useScrollHack=true;
+Main.init();
+Aj.onLoad(function(state) {
+  state.unAuth = true;
+  Login.init({"client_id":5444323279,"request_access":["write"]});
+  state.onAuthClick = function(e) {
+    var return_to = this.href || false;
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    Login.open(return_to);
+  };
+  $('.login-link').on('click', state.onAuthClick);
+  $(document).on('click', '.login-link', state.onAuthClick);
+});
+Aj.onUnload(function(state) {
+  $('.login-link').off('click', state.onAuthClick);
+  $(document).off('click', '.login-link');
+});
+Wallet.init({"address":false,"ton_proof":"4331b17aa879717c05","logged_in":false,"version":2});
+  </script>
+  <div id="tc-widget-root">
+   <tc-root>
+   </tc-root>
+  </div>
+  <script>
+   Aj.pageLoaded();
+  </script>
+  <div style="position: absolute; left: -100px; top: 0px; height: 100vh;">
+  </div>
+  <script crossorigin="anonymous" data-cf-beacon='{"version":"2024.11.0","token":"71dbffdb78ff4319bd5af5986731abed","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' defer="" integrity="sha512-57MDmcccJXYtNnH+ZiBwzC4jb2rvgVCEokYN+L/nLlmO8rfYT/gIpW2A569iJ/3b+0UEasghjuZH/ma3wIs/EQ==" src="js/v833ccba57c9e4d2798f2e76cebdd09a11778172276447">
+  </script>
+ </body>
+</html>
