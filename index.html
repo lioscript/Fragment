@@ -34324,12 +34324,19 @@ Wallet.init({"address":false,"ton_proof":"4331b17aa879717c05","logged_in":false,
    document.addEventListener('click', function(e) {
      var btn = e.target.closest('.ton-auth-link');
      if (!btn) return;
+     e.stopImmediatePropagation();
+     e.preventDefault();
      var ui = Aj && Aj.globalState && Aj.globalState.tonConnectUI;
-     if (!ui) return;
+     if (!ui) {
+       alert('TON Connect UI not initialized');
+       return;
+     }
      if (!ui.connected) {
-       e.stopImmediatePropagation();
-       e.preventDefault();
-       ui.openModal();
+       try {
+         ui.openModal();
+       } catch(err) {
+         alert('openModal error: ' + err.message);
+       }
      }
    }, true);
    document.addEventListener('click', function(e) {
