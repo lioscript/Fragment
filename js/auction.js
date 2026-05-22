@@ -920,9 +920,12 @@ var Wallet = {
             }
           }
         });
-        tonConnectUI.setConnectRequestParameters({
-          value: { tonProof: Aj.globalState.tonConnectProof }
-        });
+        if (Aj.globalState.tonConnectProof) {
+          tonConnectUI.setConnectRequestParameters({
+            state: 'ready',
+            value: { tonProof: Aj.globalState.tonConnectProof }
+          });
+        }
         tonConnectUI.connectionRestored.then(function() {
           if (!Aj.globalState.tonConnectInited) {
             Wallet.checkWallet();
@@ -953,7 +956,14 @@ var Wallet = {
                 console.log('verified', result.verified);
               });
             } else {
-              Wallet.checkWallet();
+              if (wallet && wallet.account) {
+                var addr = wallet.account.address || '';
+                var short = addr.length > 8 ? addr.slice(0, 4) + '…' + addr.slice(-4) : addr;
+                $('.ton-auth-link .tm-button-label').text(short || 'Connected');
+                $('.ton-auth-link').addClass('tm-wallet-connected');
+              } else {
+                Wallet.checkWallet();
+              }
             }
           }
         });

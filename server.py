@@ -26,6 +26,8 @@ PAGE_ROUTES = {
     "/about": "html/page_7.html",
     "/terms": "html/page_8.html",
     "/privacy": "html/page_9.html",
+    "/stars/buy": "html/page_4.html",
+    "/stars/giveaway": "html/page_4.html",
 }
 
 SORT_FILTER_PAGES = {
@@ -293,7 +295,15 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if file_path is None and path.startswith("/html/") and path.endswith(".html"):
             file_path = "html/page_17.html"
 
-        # /username slugs → product page
+        # /number/* → number product page
+        if file_path is None and path.startswith("/number/"):
+            file_path = "html/page_number.html" if os.path.isfile("html/page_number.html") else "html/page_17.html"
+
+        # /gift/* or /gifts/* → gift product page
+        if file_path is None and (re.match(r'^/gift/', path) or re.match(r'^/gifts/[^/]+/', path)):
+            file_path = "html/page_gift.html" if os.path.isfile("html/page_gift.html") else "html/page_17.html"
+
+        # /username slugs → username product page
         if file_path is None and re.match(r'^/[a-zA-Z0-9_]+$', path):
             slug = path.lstrip("/")
             candidate = f"html/{slug}.html"
