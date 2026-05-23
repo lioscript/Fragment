@@ -920,6 +920,17 @@ var Wallet = {
             Wallet.checkWallet();
             Aj.globalState.tonConnectInited = true;
           }
+          // Restore UI if wallet session was already active
+          var wallet = tonConnectUI.wallet;
+          if (wallet && wallet.account) {
+            var addr = wallet.account.address || '';
+            var short = addr.length > 8 ? addr.slice(0, 4) + '\u2026' + addr.slice(-4) : addr;
+            $('.ton-auth-link .tm-button-label').text(short || 'Connected');
+            $('.ton-auth-link').addClass('tm-wallet-connected');
+            $('.tm-wallet-menu-addr').text(short || 'Connected');
+            $('.tm-wallet-menu-disconnected').hide();
+            $('.tm-wallet-menu-connected').show();
+          }
         });
         tonConnectUI.onStatusChange(function(wallet) {
           if (Aj.globalState.tonConnectInited) {
@@ -998,7 +1009,7 @@ var Wallet = {
   eTonAuth: function(e) {
     if (Aj.globalState.tonConnectVersion == 2) {
       var tonConnectUI = Aj.globalState.tonConnectUI;
-      if (tonConnectUI && !tonConnectUI.connected) {
+      if (tonConnectUI) {
         e.stopImmediatePropagation();
         e.preventDefault();
         tonConnectUI.openModal();
