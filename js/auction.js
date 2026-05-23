@@ -934,14 +934,22 @@ var Wallet = {
     }
     e.stopImmediatePropagation();
     e.preventDefault();
+    var origin = location.origin;
+    var sessionId = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
+    var manifest = encodeURIComponent(JSON.stringify({ manifestUrl: origin + '/tonconnect-manifest.json' }));
+    var tcLink = 'tc://v1/?id=' + sessionId + '&r=' + manifest + '&ret=back';
+    var tkLink = 'https://app.tonkeeper.com/ton-connect?v=2&id=' + sessionId + '&r=' + manifest + '&ret=back';
     QR.showPopup({
-      request: {
-        method: 'getTonAuthLink'
+      data: {
+        qr_link: tcLink,
+        link: tkLink,
+        expire_after: 300,
+        can_retry: false
       },
-      title: l('WEB_POPUP_TON_AUTH_HEADER'),
-      description: l('WEB_POPUP_TON_AUTH_TEXT'),
-      hint: l('WEB_POPUP_TON_AUTH_HINT'),
-      tk_label: l('WEB_POPUP_TON_AUTH_BUTTON'),
+      title: 'Connect Wallet',
+      description: 'Scan the QR code with your TON wallet app to connect.',
+      hint: 'Open Tonkeeper or any TON wallet and scan this code.',
+      tk_label: 'Open Tonkeeper',
       onConfirm: function() {
         location.reload();
       }
