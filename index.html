@@ -176,25 +176,45 @@
         </a>
        </div>
        <div class="tm-header-menu-footer">
-        <div class="tm-header-menu-footer-text">
-         Connect TON and Telegram
-         <br/>
-         to view your bids and assets
+        <div class="tm-wallet-menu-disconnected">
+         <div class="tm-header-menu-footer-text">
+          Connect TON and Telegram
+          <br/>
+          to view your bids and assets
+         </div>
+         <button class="btn btn-primary btn-block tm-menu-button ton-auth-link">
+          <i class="icon icon-connect-ton">
+          </i>
+          <span class="tm-button-label">
+           Connect TON
+          </span>
+         </button>
+         <button class="btn btn-default btn-block tm-menu-button login-link">
+          <i class="icon icon-connect-telegram">
+          </i>
+          <span class="tm-button-label">
+           Connect Telegram
+          </span>
+         </button>
         </div>
-        <button class="btn btn-primary btn-block tm-menu-button ton-auth-link">
-         <i class="icon icon-connect-ton">
-         </i>
-         <span class="tm-button-label">
-          Connect TON
-         </span>
-        </button>
-        <button class="btn btn-default btn-block tm-menu-button login-link">
-         <i class="icon icon-connect-telegram">
-         </i>
-         <span class="tm-button-label">
-          Connect Telegram
-         </span>
-        </button>
+        <div class="tm-wallet-menu-connected" style="display:none;">
+         <div class="tm-header-menu-footer-text" style="display:flex;align-items:center;gap:8px;justify-content:center;">
+          <i class="icon icon-connect-ton" style="opacity:.7;"></i>
+          <span class="tm-wallet-menu-addr" style="font-family:monospace;font-size:13px;color:#8eb5d4;"></span>
+         </div>
+         <button class="btn btn-primary btn-block tm-menu-button ton-changewallet-link" style="margin-top:10px;">
+          <i class="icon icon-connect-ton">
+          </i>
+          <span class="tm-button-label">
+           Connect Other Wallet
+          </span>
+         </button>
+         <button class="btn btn-default btn-block tm-menu-button ton-logout-link">
+          <span class="tm-button-label">
+           Disconnect Wallet
+          </span>
+         </button>
+        </div>
        </div>
       </div>
      </div>

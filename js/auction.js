@@ -20,6 +20,7 @@ var Main = {
       $(cont).on('click.curPage', '.logout-link', Login.logOut);
       $(cont).on('click.curPage', '.ton-auth-link', Wallet.eTonAuth);
       $(cont).on('click.curPage', '.ton-logout-link', Wallet.eLogOut);
+      $(cont).on('click.curPage', '.ton-changewallet-link', Wallet.eChangeWallet);
       $(cont).on('click.curPage', '.js-copy-code', Main.copyCode);
       $(cont).on('click.curPage', '.js-lottie[playbyclick]', Main.playLottieByClick);
       $(cont).on('click.curPage', '.js-main-search-dd-item', Main.eMainSearchDDSelected);
@@ -938,6 +939,9 @@ var Wallet = {
                 var short = addr.length > 8 ? addr.slice(0, 4) + '…' + addr.slice(-4) : addr;
                 $('.ton-auth-link .tm-button-label').text(short || 'Connected');
                 $('.ton-auth-link').addClass('tm-wallet-connected');
+                $('.tm-wallet-menu-addr').text(short || 'Connected');
+                $('.tm-wallet-menu-disconnected').hide();
+                $('.tm-wallet-menu-connected').show();
               } else { Wallet.checkWallet(); }
             }
           }
@@ -1021,6 +1025,24 @@ var Wallet = {
     Wallet.disconnect();
     return false;
   },
+  eChangeWallet: function(e) {
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    var tonConnectUI = Aj.globalState.tonConnectUI;
+    if (tonConnectUI) {
+      tonConnectUI.disconnect().then(function() {
+        Wallet.resetMenuState();
+        tonConnectUI.openModal();
+      });
+    }
+    return false;
+  },
+  resetMenuState: function() {
+    $('.ton-auth-link .tm-button-label').text('Connect TON');
+    $('.ton-auth-link').removeClass('tm-wallet-connected');
+    $('.tm-wallet-menu-connected').hide();
+    $('.tm-wallet-menu-disconnected').show();
+  },
   checkWallet: function() {
     if (Aj.globalState.tonConnectVersion == 2) {
       var authAddress = Aj.globalState.tonConnectAuthAddress,
@@ -1038,6 +1060,7 @@ var Wallet = {
   },
   disconnect: function() {
     var tonConnectUI = Aj.globalState.tonConnectUI;
+    Wallet.resetMenuState();
     if (tonConnectUI && tonConnectUI.connected) {
       tonConnectUI.disconnect().then(function() {
         if (Aj.globalState.tonConnectAuthAddress) {
