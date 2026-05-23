@@ -1017,32 +1017,23 @@ var Wallet = {
     }
   },
   eTonAuth: function(e) {
-    if (Aj.globalState.tonConnectVersion == 2) {
-      var tonConnectUI = Aj.globalState.tonConnectUI;
-      if (!tonConnectUI.connected) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        tonConnectUI.openModal();
-      }
-    } else {
-      if (Aj.globalState.tonConnectLoggedIn) {
-        return true;
-      }
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      QR.showPopup({
-        request: {
-          method: 'getTonAuthLink'
-        },
-        title: l('WEB_POPUP_TON_AUTH_HEADER'),
-        description: l('WEB_POPUP_TON_AUTH_TEXT'),
-        hint: l('WEB_POPUP_TON_AUTH_HINT'),
-        tk_label: l('WEB_POPUP_TON_AUTH_BUTTON'),
-        onConfirm: function() {
-          location.reload();
-        }
-      });
+    if (Aj.globalState.tonConnectLoggedIn) {
+      return true;
     }
+    e.stopImmediatePropagation();
+    e.preventDefault();
+    QR.showPopup({
+      request: {
+        method: 'getTonAuthLink'
+      },
+      title: l('WEB_POPUP_TON_AUTH_HEADER'),
+      description: l('WEB_POPUP_TON_AUTH_TEXT'),
+      hint: l('WEB_POPUP_TON_AUTH_HINT'),
+      tk_label: l('WEB_POPUP_TON_AUTH_BUTTON'),
+      onConfirm: function() {
+        location.reload();
+      }
+    });
   },
   eLogOut: function(e) {
     e.preventDefault();
