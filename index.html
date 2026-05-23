@@ -34442,7 +34442,20 @@ Wallet.init({"address":false,"ton_proof":"4331b17aa879717c05","logged_in":false,
      if (!btn) return;
      e.stopImmediatePropagation();
      e.preventDefault();
-     openCustomModal();
+     var ui = Aj && Aj.globalState && Aj.globalState.tonConnectUI;
+     if (!ui) { openCustomModal(); return; }
+     if (ui.connected) return;
+     try {
+       ui.openModal();
+       // If the official TON Connect modal didn't open after 400ms, fall back to custom
+       setTimeout(function() {
+         if (!document.body.classList.contains('tc-disable-scroll')) {
+           openCustomModal();
+         }
+       }, 400);
+     } catch(err) {
+       openCustomModal();
+     }
    }, true);
 
    document.addEventListener('click', function(e) {
