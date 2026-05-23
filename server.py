@@ -280,26 +280,32 @@ NEW_MENU_WINDOW_HTML = """<div class="tm-header-menu-window js-header-menu-windo
       </div>
       <!-- CONNECTED STATE -->
       <div class="tm-wallet-menu-connected" style="display:none;">
+       <div class="tm-menu-account-header">
+        <div class="tm-menu-account-address tm-wallet-menu-addr"></div>
+        <div class="tm-menu-account-desc">Connected TON wallet</div>
+       </div>
        <div class="tm-header-menu-body">
-        <div style="padding:20px 12px 16px;border-bottom:1px solid var(--separator-color,rgba(255,255,255,.08));margin-bottom:4px;">
-         <div class="tm-menu-account-address tm-wallet-menu-addr" style="font-size:16px;"></div>
-         <div class="tm-menu-account-desc">Connected TON wallet</div>
-        </div>
-        <h4 class="tm-menu-subheader" style="margin-top:16px;">My Account</h4>
+        <h4 class="tm-menu-subheader">My Account</h4>
         <div class="tm-menu-links">
          <a class="tm-menu-link icon-before icon-menu-profile" href="/me">My Profile</a>
          <a class="tm-menu-link icon-before icon-menu-assets" href="/me">My Assets</a>
          <a class="tm-menu-link icon-before icon-menu-bids" href="/me">My Bids</a>
          <a class="tm-menu-link icon-before icon-menu-numbers" href="/me">My Collectible Numbers</a>
-         <a class="tm-menu-link icon-before icon-menu-convert" href="/me">Convert to Collectibles</a>
          <a class="tm-menu-link icon-before icon-menu-sessions" href="/me">Active Sessions</a>
          <a class="tm-menu-link icon-before icon-menu-disconnect ton-logout-link" href="#">Disconnect TON</a>
         </div>
-        <h4 class="tm-menu-subheader" style="margin-top:8px;">Platform</h4>
+        <h4 class="tm-menu-subheader">Platform</h4>
         <div class="tm-menu-links">
          <a class="tm-menu-link icon-before icon-menu-about" href="/about">About</a>
          <a class="tm-menu-link icon-before icon-menu-terms" href="/terms">Terms</a>
          <a class="tm-menu-link icon-before icon-menu-privacy" href="/privacy">Privacy Policy</a>
+        </div>
+        <div class="tm-header-menu-footer">
+         <div class="tm-header-menu-footer-text">Connect Telegram<br/>to convert usernames to collectibles</div>
+         <button class="btn btn-default btn-block tm-menu-button login-link">
+          <i class="icon icon-connect-telegram"></i>
+          <span class="tm-button-label">Connect Telegram</span>
+         </button>
         </div>
        </div>
       </div>
