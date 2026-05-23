@@ -691,29 +691,30 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.serve_content(content, is_ajax)
             return
 
-        # /me → redirect to home (no real profile page)
+        # /me → profile page
         if file_path is None and path == "/me":
-            self.send_response(302)
-            self.send_header("Location", "/")
-            self.send_header("Content-Length", "0")
-            self.end_headers()
-            return
+            file_path = "html/page_me.html"
 
         # /username slugs → dynamic username product page
         if file_path is None and re.match(r'^/[a-zA-Z0-9_]+$', path):
             username = path.lstrip("/")
-            candidate = f"html/{username}.html"
-            if os.path.isfile(candidate):
-                file_path = candidate
+            # First check if there is a dedicated page mapped via /html/{username}.html
+            html_route_key = f"/html/{username}.html"
+            if html_route_key in PAGE_ROUTES:
+                file_path = PAGE_ROUTES[html_route_key]
             else:
-                tpl = "html/page_17.html"
-                with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
-                    content = f.read()
-                content = apply_dynamic_replacements(content, [
-                    ("ccccc", username),
-                ])
-                self.serve_content(content, is_ajax)
-                return
+                candidate = f"html/{username}.html"
+                if os.path.isfile(candidate):
+                    file_path = candidate
+                else:
+                    tpl = "html/page_17.html"
+                    with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
+                        content = f.read()
+                    content = apply_dynamic_replacements(content, [
+                        ("ccccc", username),
+                    ])
+                    self.serve_content(content, is_ajax)
+                    return
 
         if file_path:
             if is_ajax:

@@ -1,0 +1,179 @@
+<html>
+ <head>
+  <meta charset="utf-8"/>
+  <title>
+   My Profile – Fragment
+  </title>
+  <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <meta content="telephone=no" name="format-detection"/>
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+  <link href="/img/fragment.ico" rel="shortcut icon" type="image/x-icon"/>
+  <link color="#121519" href="/img/fragment_icon.svg" rel="mask-icon"/>
+  <script>
+   document.cookie="stel_dt="+encodeURIComponent((new Date).getTimezoneOffset())+";path=/;max-age=31536000;samesite=None;secure"
+  </script>
+  <link href="css/font-roboto.css" rel="stylesheet" type="text/css"/>
+  <link href="css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="css/bootstrap-extra.css" rel="stylesheet"/>
+  <link href="css/auction.css" rel="stylesheet"/>
+ </head>
+ <body class="emoji_image" ontouchstart="">
+  <div class="progress-bar" id="aj_progress" style="width:0;transition:width .3s linear,box-shadow .2s;position:fixed;z-index:1000;top:0;height:3px;"></div>
+  <div id="aj_content">
+   <header class="tm-header with-tabs">
+    <div class="tm-header-logo">
+     <a class="tm-logo js-header-logo js-logo js-random-logo js-logo-hoverable" href="/" style="--image-url-logo-icon-animated: url('/img/TelemintLogoSprite1.svg');">
+      <i class="tm-logo-icon js-logo-icon"></i>
+      <i class="tm-logo-text"></i>
+     </a>
+    </div>
+    <div class="tm-header-body">
+     <div class="tm-header-tabs-wrap">
+      <div class="tm-header-tabs tm-x-scrollable js-x-scrollable">
+       <a class="tm-header-tab" href="/">Usernames</a>
+       <a class="tm-header-tab" href="/numbers">Numbers</a>
+       <a class="tm-header-tab" href="/gifts">Gifts<span class="tm-label-new tm-header-tab-label-new">New</span></a>
+       <a class="tm-header-tab" href="/stars">Stars</a>
+       <a class="tm-header-tab" href="/premium">Premium</a>
+       <a class="tm-header-tab" href="/ads">Ads</a>
+      </div>
+     </div>
+    </div>
+    <div class="tm-header-actions tm-header-actions-wide">
+     <button class="btn btn-default tm-header-action tm-header-button login-link">
+      <i class="icon icon-connect-telegram"></i>
+      <span class="tm-button-label">Connect Telegram</span>
+     </button>
+     <button class="btn btn-primary tm-header-action tm-header-button ton-auth-link">
+      <i class="icon icon-connect-ton"></i>
+      <span class="tm-button-label">Connect TON</span>
+     </button>
+    </div>
+    <div class="tm-header-actions tm-header-actions-thin">
+     <button class="btn btn-primary tm-header-action tm-header-button ton-auth-link">
+      <i class="icon icon-connect-ton"></i>
+      <span class="tm-button-label">Connect TON</span>
+     </button>
+    </div>
+    <div class="tm-header-menu-button js-header-menu-button icon-before icon-header-menu"></div>
+    <div class="tm-header-menu hide js-header-menu" data-close-outside="js-header-menu-window">
+     <div class="tm-header-menu-close-button js-header-menu-close-button icon-before icon-header-menu-close"></div>
+     <div class="tm-header-menu-window js-header-menu-window">
+      <div class="tm-header-menu-body">
+       <h4 class="tm-menu-subheader">Platform</h4>
+       <div class="tm-menu-links">
+        <a class="tm-menu-link icon-before icon-menu-about" href="/about">About</a>
+        <a class="tm-menu-link icon-before icon-menu-terms" href="/terms">Terms</a>
+        <a class="tm-menu-link icon-before icon-menu-privacy" href="/privacy">Privacy Policy</a>
+       </div>
+       <div class="tm-header-menu-footer">
+        <div class="tm-header-menu-footer-text">Connect TON and Telegram<br/>to view your bids and assets</div>
+        <button class="btn btn-primary btn-block tm-menu-button ton-auth-link">
+         <i class="icon icon-connect-ton"></i>
+         <span class="tm-button-label">Connect TON</span>
+        </button>
+        <button class="btn btn-default btn-block tm-menu-button login-link">
+         <i class="icon icon-connect-telegram"></i>
+         <span class="tm-button-label">Connect Telegram</span>
+        </button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </header>
+   <main class="tm-main">
+    <div style="max-width:720px;margin:0 auto;padding:32px 16px 64px;">
+
+     <div id="me-wallet-section" style="background:var(--section-bg,#1a2026);border-radius:16px;padding:24px;margin-bottom:24px;">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
+       <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#248bda,#1565a8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="28" height="28" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="m4.02 7h11.945c.33 0 .6.27.6.615 0 .105-.015.21-.075.3l-5.56 10.02c-.33.6-1.08.81-1.665.48-.21-.12-.375-.285-.48-.495l-5.305-10.02c-.15-.3-.045-.675.255-.825.09-.045.18-.075.285-.075z" fill="white"/>
+        </svg>
+       </div>
+       <div style="flex:1;min-width:0;">
+        <div style="color:var(--text-color,#fff);font-size:18px;font-weight:700;margin-bottom:4px;">My Profile</div>
+        <div id="me-wallet-addr" style="color:var(--hint-color,#8794a1);font-size:13px;font-family:monospace;word-break:break-all;"></div>
+       </div>
+      </div>
+      <div id="me-not-connected" style="display:none;text-align:center;padding:16px 0 8px;">
+       <div style="color:var(--hint-color,#8794a1);margin-bottom:16px;">Connect your TON wallet to view your profile, bids and assets.</div>
+       <button class="btn btn-primary ton-auth-link" style="min-width:180px;">
+        <i class="icon icon-connect-ton"></i>
+        <span class="tm-button-label">Connect TON</span>
+       </button>
+      </div>
+     </div>
+
+     <div class="tm-section" style="margin-bottom:24px;">
+      <div class="tm-section-header" style="padding:0 0 16px;">
+       <h3 class="tm-section-header-text" style="font-size:18px;font-weight:700;">My Assets</h3>
+      </div>
+      <div style="background:var(--section-bg,#1a2026);border-radius:12px;padding:40px 24px;text-align:center;">
+       <div style="color:var(--hint-color,#8794a1);font-size:15px;">No assets yet.</div>
+      </div>
+     </div>
+
+     <div class="tm-section" style="margin-bottom:24px;">
+      <div class="tm-section-header" style="padding:0 0 16px;">
+       <h3 class="tm-section-header-text" style="font-size:18px;font-weight:700;">My Bids</h3>
+      </div>
+      <div style="background:var(--section-bg,#1a2026);border-radius:12px;padding:40px 24px;text-align:center;">
+       <div style="color:var(--hint-color,#8794a1);font-size:15px;">No active bids.</div>
+      </div>
+     </div>
+
+     <div class="tm-section">
+      <div class="tm-section-header" style="padding:0 0 16px;">
+       <h3 class="tm-section-header-text" style="font-size:18px;font-weight:700;">My Collectible Numbers</h3>
+      </div>
+      <div style="background:var(--section-bg,#1a2026);border-radius:12px;padding:40px 24px;text-align:center;">
+       <div style="color:var(--hint-color,#8794a1);font-size:15px;">No collectible numbers.</div>
+      </div>
+     </div>
+
+    </div>
+   </main>
+   <script id="aj_script">
+(function() {
+  function shortAddr(addr) {
+    if (!addr || addr.length < 10) return addr;
+    return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
+  }
+  function getWalletAddr() {
+    try {
+      var keys = Object.keys(localStorage);
+      for (var i = 0; i < keys.length; i++) {
+        if (keys[i].indexOf('ton') !== -1 || keys[i].indexOf('wallet') !== -1) {
+          try {
+            var val = JSON.parse(localStorage.getItem(keys[i]));
+            if (val && val.account && val.account.address) return val.account.address;
+            if (val && val.address) return val.address;
+          } catch(e) {}
+        }
+      }
+    } catch(e) {}
+    return null;
+  }
+  var addr = getWalletAddr();
+  var $addr = document.getElementById('me-wallet-addr');
+  var $notConn = document.getElementById('me-not-connected');
+  if (addr) {
+    if ($addr) $addr.textContent = shortAddr(addr);
+    if ($notConn) $notConn.style.display = 'none';
+  } else {
+    if ($addr) $addr.textContent = 'Not connected';
+    if ($notConn) $notConn.style.display = 'block';
+  }
+})();
+   </script>
+  </div>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/main-aj.js"></script>
+  <script src="js/auction.js"></script>
+  <script>
+   ajInit({"version":598,"apiUrl":"\/api?hash=835c431984a2f33d77","unauth":true,"state":{"quickSearch":false,"tonRate":1.9653213}});
+  </script>
+ </body>
+</html>
