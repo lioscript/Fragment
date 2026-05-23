@@ -204,8 +204,14 @@ FOR_SALE_DISPLAY = {
     "otctelegram": "otcTelegram",
 }
 
+FOR_SALE_END_DATES = {
+    "otcbank":      "2026-06-10T14:00:00+00:00",
+    "antiscam":     "2026-06-18T09:30:00+00:00",
+    "otctelegram":  "2026-06-25T21:00:00+00:00",
+}
 
-def generate_sale_page(display_name, price_ton):
+
+def generate_sale_page(display_name, price_ton, end_datetime=None):
     """Generate a 'For sale' product page for a username."""
     usd = price_ton * TON_RATE
     usd_str = f"~ ${usd:.0f}"
@@ -218,6 +224,7 @@ def generate_sale_page(display_name, price_ton):
     content = content.replace("ccccc", display_name)
     content = content.replace("On auction", "For sale")
 
+    # Replace bid-info block with sale price table
     new_bid = (
         '<div class="tm-section-box tm-section-bid-info">'
         '<table class="table tm-table tm-table-fixed">'
@@ -233,12 +240,23 @@ def generate_sale_page(display_name, price_ton):
         content, flags=re.DOTALL
     )
 
-    content = re.sub(
-        r'<div class="tm-section-box tm-section-countdown-wrap[^"]*">.*?</div>\s*</div>',
-        '',
-        content, flags=re.DOTALL
-    )
+    # Update countdown timer: change labels and datetime, keep the block
+    if end_datetime:
+        content = re.sub(
+            r'datetime="[^"]*"',
+            f'datetime="{end_datetime}"',
+            content, count=1
+        )
+        content = content.replace("Auction ends in", "Sale ends in")
+        content = content.replace("Auction will close soon", "Sale will close soon")
+    else:
+        content = re.sub(
+            r'<div class="tm-section-box tm-section-countdown-wrap[^"]*">.*?</div>\s*</div>',
+            '',
+            content, flags=re.DOTALL
+        )
 
+    # Replace buy button
     content = re.sub(
         r'<div class="tm-section-box tm-section-buttons">.*?</div>',
         f'<div class="tm-section-box tm-section-buttons">'
@@ -246,7 +264,44 @@ def generate_sale_page(display_name, price_ton):
         content, flags=re.DOTALL
     )
 
-    content = content.replace("Bid History", "Sale History")
+    # Ownership History: change header and replace table content
+    content = content.replace("Bid History", "Ownership History")
+    content = content.replace(
+        '<th style="--width:50%">\n          From\n         </th>',
+        '<th style="--width:50%">\n          Buyer\n         </th>'
+    )
+    history_row = (
+        '\n        <tr>\n'
+        '         <td>\n'
+        '          <div class="table-cell">\n'
+        '           <div class="table-cell-value tm-value icon-before icon-ton">\n'
+        f'            {price_str}\n'
+        '           </div>\n'
+        '          </div>\n'
+        '         </td>\n'
+        '         <td>\n'
+        '          <div class="table-cell">\n'
+        '           <div class="tm-datetime">\n'
+        '            <span class="thin-only"><time class="short">May 20 at 10:00</time></span>\n'
+        '            <span class="wide-only"><time>20 May 2026 at 10:00</time></span>\n'
+        '           </div>\n'
+        '          </div>\n'
+        '         </td>\n'
+        '         <td>\n'
+        '          <div class="table-cell">\n'
+        '           <a class="tm-wallet" href="https://tonviewer.com/lionel.ton" target="_blank">\n'
+        '            <span class="short">lionel.ton</span>\n'
+        '           </a>\n'
+        '          </div>\n'
+        '         </td>\n'
+        '        </tr>\n       '
+    )
+    content = re.sub(
+        r'(<tbody>).*?(</tbody>)',
+        r'\g<1>' + history_row + r'\g<2>',
+        content, flags=re.DOTALL
+    )
+
     return content
 
 
@@ -833,7 +888,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             if username_lower in FOR_SALE_USERNAMES:
                 display_name = FOR_SALE_DISPLAY[username_lower]
                 price = FOR_SALE_USERNAMES[username_lower]
-                content = generate_sale_page(display_name, price)
+                end_dt = FOR_SALE_END_DATES.get(username_lower)
+                content = generate_sale_page(display_name, price, end_dt)
                 self.serve_content(content, is_ajax)
                 return
             # First check if there is a dedicated page mapped via /html/{username}.html
