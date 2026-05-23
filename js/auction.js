@@ -882,7 +882,70 @@ var Wallet = {
     Aj.globalState.tonConnectAuthAddress = options.address || false;
     Aj.globalState.tonConnectLoggedIn = options.logged_in || false;
     Aj.globalState.tonConnectProof = options.ton_proof || '';
-    Aj.globalState.tonConnectVersion = 1;
+    Aj.globalState.tonConnectVersion = options.version || 1;
+    if (Aj.globalState.tonConnectVersion == 2) {
+      var tonConnectUI = Aj.globalState.tonConnectUI;
+      if (!tonConnectUI) {
+        tonConnectUI = Aj.globalState.tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+          manifestUrl: location.origin + '/tonconnect-manifest.json',
+          actionsConfiguration: {
+            modals: ['before'],
+            notifications: [],
+            returnStrategy: 'back'
+          },
+          enableAndroidBackHandler: false,
+          uiPreferences: {
+            theme: 'DARK',
+            borderRadius: 's',
+            colorsSet: {
+              'DARK': {
+                accent: '#4db2ff',
+                background: { primary: '#1a2026', qr: '#fff', tint: '#242e38' },
+                connectButton: { background: '#248bda', foreground: '#fff' },
+                icon: { error: '#ff5863' },
+                text: { primary: '#fff', secondary: '#8794a1' }
+              }
+            }
+          }
+        });
+        if (Aj.globalState.tonConnectProof) {
+          tonConnectUI.setConnectRequestParameters({
+            state: 'ready',
+            value: { tonProof: Aj.globalState.tonConnectProof }
+          });
+        }
+        tonConnectUI.connectionRestored.then(function() {
+          if (!Aj.globalState.tonConnectInited) {
+            Wallet.checkWallet();
+            Aj.globalState.tonConnectInited = true;
+          }
+        });
+        tonConnectUI.onStatusChange(function(wallet) {
+          if (Aj.globalState.tonConnectInited) {
+            if (wallet && wallet.account && wallet.connectItems &&
+                wallet.connectItems.tonProof && wallet.connectItems.tonProof.proof) {
+              Aj.apiRequest('checkTonProofAuth', {
+                account: JSON.stringify(wallet.account),
+                device: JSON.stringify(wallet.device),
+                proof: JSON.stringify(wallet.connectItems.tonProof.proof)
+              }, function(result) {
+                if (result.verified) { location.reload(); }
+                else { Wallet.disconnect(); if (result.error) { showAlert(result.error); } }
+              });
+            } else {
+              if (wallet && wallet.account) {
+                var addr = wallet.account.address || '';
+                var short = addr.length > 8 ? addr.slice(0, 4) + '…' + addr.slice(-4) : addr;
+                $('.ton-auth-link .tm-button-label').text(short || 'Connected');
+                $('.ton-auth-link').addClass('tm-wallet-connected');
+              } else { Wallet.checkWallet(); }
+            }
+          }
+        });
+      } else {
+        Wallet.checkWallet();
+      }
+    }
   },
   sendTransaction: function(options) {
     if (Aj.globalState.tonConnectVersion == 2) {
@@ -929,31 +992,28 @@ var Wallet = {
     }
   },
   eTonAuth: function(e) {
-    if (Aj.globalState.tonConnectLoggedIn) {
-      return true;
-    }
-    e.stopImmediatePropagation();
-    e.preventDefault();
-    var origin = location.origin;
-    var sessionId = Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2);
-    var manifest = encodeURIComponent(JSON.stringify({ manifestUrl: origin + '/tonconnect-manifest.json' }));
-    var tcLink = 'tc://v1/?id=' + sessionId + '&r=' + manifest + '&ret=back';
-    var tkLink = 'https://app.tonkeeper.com/ton-connect?v=2&id=' + sessionId + '&r=' + manifest + '&ret=back';
-    QR.showPopup({
-      data: {
-        qr_link: tcLink,
-        link: tkLink,
-        expire_after: 300,
-        can_retry: false
-      },
-      title: 'Connect Wallet',
-      description: 'Scan the QR code with your TON wallet app to connect.',
-      hint: 'Open Tonkeeper or any TON wallet and scan this code.',
-      tk_label: 'Open Tonkeeper',
-      onConfirm: function() {
-        location.reload();
+    if (Aj.globalState.tonConnectVersion == 2) {
+      var tonConnectUI = Aj.globalState.tonConnectUI;
+      if (tonConnectUI && !tonConnectUI.connected) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+        tonConnectUI.openModal();
       }
-    });
+    } else {
+      if (Aj.globalState.tonConnectLoggedIn) {
+        return true;
+      }
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      QR.showPopup({
+        request: { method: 'getTonAuthLink' },
+        title: l('WEB_POPUP_TON_AUTH_HEADER'),
+        description: l('WEB_POPUP_TON_AUTH_TEXT'),
+        hint: l('WEB_POPUP_TON_AUTH_HINT'),
+        tk_label: l('WEB_POPUP_TON_AUTH_BUTTON'),
+        onConfirm: function() { location.reload(); }
+      });
+    }
   },
   eLogOut: function(e) {
     e.preventDefault();

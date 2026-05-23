@@ -427,8 +427,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
             content = content.replace("<head>", '<head>\n  <base href="/">', 1)
             if '<base href="/">' not in content:
                 content = re.sub(r'(<head[^>]*>)', r'\1\n  <base href="/">', content, count=1)
-        if "</body>" in content:
-            content = content.replace("</body>", TON_CONNECT_SCRIPT + "</body>", 1)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -480,8 +478,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
             content = content.replace("<head>", '<head>\n  <base href="/">', 1)
             if '<base href="/">' not in content:
                 content = re.sub(r'(<head[^>]*>)', r'\1\n  <base href="/">', content, count=1)
-        if "</body>" in content:
-            content = content.replace("</body>", TON_CONNECT_SCRIPT + "</body>", 1)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
