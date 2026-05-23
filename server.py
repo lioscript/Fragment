@@ -483,6 +483,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-Type", mime)
             self.send_header("Content-Length", str(len(data)))
+            if path_ext in (".js", ".css"):
+                self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+                self.send_header("Pragma", "no-cache")
+            else:
+                self.send_header("Cache-Control", "public, max-age=86400")
             self.end_headers()
             self.wfile.write(data)
             return
@@ -640,6 +645,36 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 })
             except Exception as e:
                 self.send_json({"ok": 0, "error": str(e)})
+            return
+
+        if method == "getTonAuthLink":
+            host = self.headers.get("Host", "")
+            scheme = "https" if host and not host.startswith("localhost") else "http"
+            origin = f"{scheme}://{host}" if host else "http://localhost:5000"
+            import base64, time, secrets
+            payload = base64.urlsafe_b64encode(secrets.token_bytes(16)).rstrip(b"=").decode()
+            ret = base64.urlsafe_b64encode(origin.encode()).rstrip(b"=").decode()
+            manifest = base64.urlsafe_b64encode(
+                (origin + "/tonconnect-manifest.json").encode()
+            ).rstrip(b"=").decode()
+            tc_link = (
+                f"tc://v1/?id={payload}"
+                f"&r=%7B%22manifestUrl%22%3A%22{origin}%2Ftonconnect-manifest.json%22%7D"
+                f"&ret=back"
+            )
+            tk_link = (
+                f"https://app.tonkeeper.com/ton-connect"
+                f"?v=2&id={payload}"
+                f"&r=%7B%22manifestUrl%22%3A%22{origin}%2Ftonconnect-manifest.json%22%7D"
+                f"&ret=back"
+            )
+            self.send_json({
+                "ok": 1,
+                "qr_link": tc_link,
+                "link": tk_link,
+                "expire_after": 300,
+                "can_retry": True,
+            })
             return
 
         # TON wallet — accept connection, mark as verified
