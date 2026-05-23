@@ -427,6 +427,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
             content = content.replace("<head>", '<head>\n  <base href="/">', 1)
             if '<base href="/">' not in content:
                 content = re.sub(r'(<head[^>]*>)', r'\1\n  <base href="/">', content, count=1)
+        # Remove tc-widget-root (TON Connect widget container)
+        content = re.sub(r'<div[^>]+id=["\']tc-widget-root["\'][^>]*>.*?</div>', '', content, flags=re.DOTALL)
+        # Remove any inline script that contains duplicate .ton-auth-link click handler
+        content = re.sub(r'<script[^>]*>(?:(?!</script>).)*?closest\s*\(\s*["\']\.ton-auth-link["\'](?:(?!</script>).)*?</script>', '', content, flags=re.DOTALL)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
