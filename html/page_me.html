@@ -132,10 +132,10 @@
     </section>
     <section class="tm-section tm-settings-section clearfix">
      <div class="tm-settings-list">
-      <a href="/me" class="tm-settings-item icon-before icon-menu-assets" data-counter="">My Assets</a>
-      <a href="/me" class="tm-settings-item icon-before icon-menu-bids" data-counter="">My Bids</a>
-      <a href="/me" class="tm-settings-item icon-before icon-menu-numbers" data-counter="">My Collectible Numbers</a>
-      <a href="/me" class="tm-settings-item icon-before icon-menu-sessions">Active Sessions</a>
+      <a href="/my/assets" class="tm-settings-item icon-before icon-menu-assets" data-counter="">My Assets</a>
+      <a href="/my/bids" class="tm-settings-item icon-before icon-menu-bids" data-counter="">My Bids</a>
+      <a href="/my/numbers" class="tm-settings-item icon-before icon-menu-numbers" data-counter="">My Collectible Numbers</a>
+      <a href="/my/sessions" class="tm-settings-item icon-before icon-menu-sessions">Active Sessions</a>
      </div>
     </section>
    </main>
@@ -226,6 +226,19 @@ Aj.onUnload(function(state){
   $(document).off('click','.login-link');
 });
 Wallet.init({"address":false,"ton_proof":"47a6bf0d9b5a27b881","logged_in":false,"version":2});
+Aj.onLoad(function(){
+  var ui=Aj.globalState.tonConnectUI;
+  if(ui){
+    ui.onStatusChange(function(w){
+      var connEl=document.getElementById('me-wallet-connected');
+      var notEl=document.getElementById('me-wallet-not-connected');
+      if(!w||!w.account){
+        if(connEl) connEl.style.display='none';
+        if(notEl) notEl.style.display='block';
+      }
+    });
+  }
+});
 Aj.pageLoaded();
   </script>
  </body>

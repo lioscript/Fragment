@@ -1,0 +1,118 @@
+<html class="header-tabs">
+ <head>
+  <meta charset="utf-8"/>
+  <title>My Bids – Fragment</title>
+  <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+  <meta content="telephone=no" name="format-detection"/>
+  <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+  <link href="/img/fragment.ico" rel="shortcut icon" type="image/x-icon"/>
+  <link color="#121519" href="/img/fragment_icon.svg" rel="mask-icon"/>
+  <script>document.cookie="stel_dt="+encodeURIComponent((new Date).getTimezoneOffset())+";path=/;max-age=31536000;samesite=None;secure"</script>
+  <link href="css/font-roboto.css" rel="stylesheet" type="text/css"/>
+  <link href="css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="css/bootstrap-extra.css" rel="stylesheet"/>
+  <link href="css/auction.css" rel="stylesheet"/>
+ </head>
+ <body class="emoji_image no-transition" ontouchstart="">
+  <div id="aj_progress" class="progress-bar"></div>
+  <div id="aj_content">
+   <header class="tm-header with-tabs">
+    <div class="tm-header-logo">
+     <a class="tm-logo js-header-logo js-logo js-random-logo js-logo-hoverable" href="/"><i class="tm-logo-icon js-logo-icon"></i><i class="tm-logo-text"></i></a>
+    </div>
+    <div class="tm-header-body">
+     <div class="tm-header-tabs-wrap">
+      <div class="tm-header-tabs tm-x-scrollable js-x-scrollable">
+       <a class="tm-header-tab" href="/">Usernames</a>
+       <a class="tm-header-tab" href="/numbers">Numbers</a>
+       <a class="tm-header-tab" href="/gifts">Gifts<span class="tm-label-new tm-header-tab-label-new">New</span></a>
+       <a class="tm-header-tab" href="/stars">Stars</a>
+       <a class="tm-header-tab" href="/premium">Premium</a>
+       <a class="tm-header-tab" href="/ads">Ads</a>
+      </div>
+     </div>
+    </div>
+    <div class="tm-header-actions tm-header-actions-wide">
+     <button class="btn btn-default tm-header-action tm-header-button login-link"><i class="icon icon-connect-telegram"></i><span class="tm-button-label">Connect Telegram</span></button>
+     <button class="btn btn-primary tm-header-action tm-header-button ton-auth-link"><i class="icon icon-connect-ton"></i><span class="tm-button-label">Connect TON</span></button>
+    </div>
+    <div class="tm-header-actions tm-header-actions-thin">
+     <button class="btn btn-primary tm-header-action tm-header-button ton-auth-link"><i class="icon icon-connect-ton"></i><span class="tm-button-label">Connect TON</span></button>
+    </div>
+    <div class="tm-header-menu-button js-header-menu-button icon-before icon-header-menu"></div>
+    <div class="tm-header-menu hide js-header-menu" data-close-outside="js-header-menu-window">
+     <div class="tm-header-menu-close-button js-header-menu-close-button icon-before icon-header-menu-close"></div>
+     <div class="tm-header-menu-window js-header-menu-window">
+      <div class="tm-header-menu-body">
+       <h4 class="tm-menu-subheader">Platform</h4>
+       <div class="tm-menu-links">
+        <a class="tm-menu-link icon-before icon-menu-about" href="/about">About</a>
+        <a class="tm-menu-link icon-before icon-menu-terms" href="/terms">Terms</a>
+        <a class="tm-menu-link icon-before icon-menu-privacy" href="/privacy">Privacy Policy</a>
+       </div>
+       <div class="tm-header-menu-footer">
+        <div class="tm-header-menu-footer-text">Connect TON and Telegram<br/>to view your bids and assets</div>
+        <button class="btn btn-primary btn-block tm-menu-button ton-auth-link"><i class="icon icon-connect-ton"></i><span class="tm-button-label">Connect TON</span></button>
+        <button class="btn btn-default btn-block tm-menu-button login-link"><i class="icon icon-connect-telegram"></i><span class="tm-button-label">Connect Telegram</span></button>
+       </div>
+      </div>
+     </div>
+    </div>
+   </header>
+   <main class="tm-main">
+    <section class="tm-section clearfix">
+     <div class="tm-section-header">
+      <h2 class="tm-section-header-text">My Bid History</h2>
+      <div class="btn-group tm-dropdown">
+       <button class="btn btn-default dropdown-toggle icon-after" data-toggle="dropdown">Newest first</button>
+       <ul class="dropdown-menu">
+        <li class="selected"><a href="/my/bids" class="dropdown-menu-item">Newest first</a></li>
+        <li><a href="/my/bids?sort=asc" class="dropdown-menu-item">Oldest first</a></li>
+       </ul>
+      </div>
+     </div>
+     <div class="tm-section-tabs">
+      <a href="/my/bids" class="tm-section-tab tab-active">Usernames<span class="tm-section-tab-counter"></span></a>
+      <a href="/my/bids?type=numbers" class="tm-section-tab"><span class="thin-only">Numbers</span><span class="wide-only">Collectible Numbers</span><span class="tm-section-tab-counter"></span></a>
+      <a href="/my/bids?type=gifts" class="tm-section-tab">Gifts<span class="tm-section-tab-counter"></span></a>
+     </div>
+     <div class="tm-table-empty">You have no bids yet.</div>
+    </section>
+   </main>
+   <footer class="tm-footer">
+    <div class="tm-footer-links">
+     <a class="tm-footer-link" href="/">Top Auctions</a>
+     <a class="tm-footer-link" href="/about">About</a>
+     <a class="tm-footer-link" href="/terms">Terms</a>
+     <a class="tm-footer-link" href="/privacy">Privacy</a>
+    </div>
+   </footer>
+  </div>
+  <script src="js/jquery.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/main-aj.js"></script>
+  <script src="js/jquery-ex.js"></script>
+  <script src="js/jquery-ui.min.js"></script>
+  <script src="js/qr-code-styling.js"></script>
+  <script src="js/tonconnect-ui.min.js"></script>
+  <script src="js/auction.js"></script>
+  <script src="js/tgsticker.js"></script>
+  <script src="js/telegram-login.js"></script>
+  <script>ajInit({"version":598,"apiUrl":"\/api?hash=835c431984a2f33d77","unauth":true,"state":{"type":1,"tonRate":1.9653213}});</script>
+  <script id="aj_script">MyBids.init();
+Main.init();
+Aj.onLoad(function(state){
+  state.unAuth=true;
+  Login.init({"client_id":5444323279,"request_access":["write"]});
+  state.onAuthClick=function(e){e.stopImmediatePropagation();e.preventDefault();Login.open();};
+  $('.login-link').on('click',state.onAuthClick);
+  $(document).on('click','.login-link',state.onAuthClick);
+});
+Aj.onUnload(function(state){
+  $('.login-link').off('click',state.onAuthClick);
+  $(document).off('click','.login-link');
+});
+Wallet.init({"address":false,"ton_proof":"","logged_in":false,"version":2});
+Aj.pageLoaded();</script>
+ </body>
+</html>
