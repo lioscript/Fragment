@@ -190,6 +190,41 @@ GIFT_COLLECTIONS = {
 }
 
 
+TON_RATE = 1.9653  # TON → USD
+
+
+def gen_price(seed_str, base, lo=0.35, hi=1.8):
+    """Deterministic pseudo-random price based on seed string."""
+    h = 5381
+    for c in str(seed_str):
+        h = ((h << 5) + h + ord(c)) & 0xFFFFFFFF
+    factor = lo + ((h % 10000) / 10000.0) * (hi - lo)
+    price = max(50, int(base * factor))
+    if price >= 50000:
+        price = round(price / 5000) * 5000
+    elif price >= 10000:
+        price = round(price / 1000) * 1000
+    elif price >= 1000:
+        price = round(price / 100) * 100
+    elif price >= 200:
+        price = round(price / 50) * 50
+    else:
+        price = round(price / 10) * 10
+    return price
+
+
+def fmt_ton(n):
+    """12500 → '12,500'"""
+    return f"{n:,}"
+
+
+def fmt_usd(ton):
+    usd = ton * TON_RATE
+    if usd >= 1000:
+        return f"~ ${usd:,.0f}"
+    return f"~ ${usd:.0f}"
+
+
 def format_number_display(number_id):
     """Convert '88800001312' → '+888 0000 1312'"""
     digits = str(number_id)
@@ -654,6 +689,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
                 content = f.read()
             display = format_number_display(number_id)
+            num_price = gen_price(number_id, 5000)
+            num_hist  = gen_price(number_id + "_h", 4000)
             content = apply_dynamic_replacements(content, [
                 ("+88800001312",         f"+{number_id}"),
                 ("88800001312",          number_id),
@@ -661,6 +698,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 ("ccccc \u2013\xa0Fragment", f"{display} \u2013\xa0Fragment"),
                 ("ccccc \u2013 Fragment",    f"{display} \u2013 Fragment"),
                 ("ccccc – Fragment",         f"{display} – Fragment"),
+                ("7,455",                fmt_ton(num_price)),
+                ("~ $14,661",            fmt_usd(num_price)),
+                ("7,100",                fmt_ton(num_hist)),
             ])
             self.serve_content(content, is_ajax)
             return
@@ -680,6 +720,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
             tpl = "html/page_gift.html" if os.path.isfile("html/page_gift.html") else "html/page_17.html"
             with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
                 content = f.read()
+            gift_price = gen_price(gift_slug, 900)
+            gift_hist  = gen_price(gift_slug + "_h", 700)
             content = apply_dynamic_replacements(content, [
                 ("plushpepe-1821",   gift_slug),
                 ("Plush Pepe #1821", title),
@@ -687,6 +729,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 ("ccccc \u2013\xa0Fragment", f"{title} \u2013\xa0Fragment"),
                 ("ccccc \u2013 Fragment",    f"{title} \u2013 Fragment"),
                 ("ccccc – Fragment",         f"{title} – Fragment"),
+                ("1,312",            fmt_ton(gift_price)),
+                ("~ $2,580",         fmt_usd(gift_price)),
+                ("1,250",            fmt_ton(gift_hist)),
             ])
             self.serve_content(content, is_ajax)
             return
@@ -710,8 +755,18 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     tpl = "html/page_17.html"
                     with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
                         content = f.read()
+                    high_bid  = gen_price(username, 20000)
+                    bid_step  = max(100, round(high_bid * 0.05 / 100) * 100)
+                    min_bid   = high_bid + bid_step
                     content = apply_dynamic_replacements(content, [
-                        ("ccccc", username),
+                        ("ccccc",          username),
+                        ("52,500",         fmt_ton(high_bid)),
+                        ("~ $103,247",     fmt_usd(high_bid)),
+                        ("2,625",          fmt_ton(bid_step)),
+                        ("55,125",         fmt_ton(min_bid)),
+                        ("~ $108,410",     fmt_usd(min_bid)),
+                        ('"55125"',        f'"{min_bid}"'),
+                        ("value=\"55125\"", f"value=\"{min_bid}\""),
                     ])
                     self.serve_content(content, is_ajax)
                     return

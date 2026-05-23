@@ -1,9 +1,7 @@
-<html>
+<html class="me-page">
  <head>
   <meta charset="utf-8"/>
-  <title>
-   My Profile – Fragment
-  </title>
+  <title>My Profile – Fragment</title>
   <meta content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
   <meta content="telephone=no" name="format-detection"/>
   <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
@@ -16,6 +14,28 @@
   <link href="css/bootstrap.min.css" rel="stylesheet"/>
   <link href="css/bootstrap-extra.css" rel="stylesheet"/>
   <link href="css/auction.css" rel="stylesheet"/>
+  <style>
+   .me-profile-wrap{max-width:800px;margin:0 auto;padding:0 16px 80px}
+   .me-wallet-card{background:var(--section-bg,#1c2733);border-radius:16px;padding:24px 20px 20px;margin-bottom:8px}
+   .me-wallet-top{display:flex;align-items:center;gap:14px;margin-bottom:0}
+   .me-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#248bda 0%,#0f5fa8 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+   .me-avatar svg{width:26px;height:26px}
+   .me-wallet-info{flex:1;min-width:0}
+   .me-wallet-title{color:var(--text-color,#e8eaed);font-size:17px;font-weight:700;line-height:1.2}
+   .me-wallet-addr{color:var(--hint-color,#7a8899);font-size:12px;font-family:monospace;word-break:break-all;margin-top:3px}
+   .me-disconnect{background:none;border:none;color:var(--hint-color,#7a8899);font-size:13px;cursor:pointer;padding:0;text-decoration:underline}
+   .me-not-connected{text-align:center;padding:8px 0 4px}
+   .me-not-connected-text{color:var(--hint-color,#7a8899);font-size:14px;margin-bottom:18px;line-height:1.5}
+   .me-tabs{display:flex;border-bottom:1px solid var(--separator-color,rgba(255,255,255,.07));margin-bottom:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+   .me-tabs::-webkit-scrollbar{display:none}
+   .me-tab{flex-shrink:0;padding:13px 16px 12px;font-size:14px;font-weight:500;color:var(--hint-color,#7a8899);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .15s}
+   .me-tab.active{color:var(--accent-color,#39ade7);border-bottom-color:var(--accent-color,#39ade7)}
+   .me-tab-count{display:inline-block;background:var(--badge-bg,rgba(57,173,231,.15));color:var(--accent-color,#39ade7);border-radius:8px;padding:1px 7px;font-size:11px;margin-left:5px;font-weight:600}
+   .me-section{background:var(--section-bg,#1c2733);border-radius:0 0 16px 16px;padding:0}
+   .me-empty{text-align:center;padding:52px 20px 56px;color:var(--hint-color,#7a8899);font-size:14px;line-height:1.6}
+   .me-empty-icon{font-size:36px;margin-bottom:12px;opacity:.5}
+   .me-section-top{border-radius:16px 16px 0 0}
+  </style>
  </head>
  <body class="emoji_image" ontouchstart="">
   <div class="progress-bar" id="aj_progress" style="width:0;transition:width .3s linear,box-shadow .2s;position:fixed;z-index:1000;top:0;height:3px;"></div>
@@ -82,88 +102,126 @@
     </div>
    </header>
    <main class="tm-main">
-    <div style="max-width:720px;margin:0 auto;padding:32px 16px 64px;">
+    <div class="me-profile-wrap">
 
-     <div id="me-wallet-section" style="background:var(--section-bg,#1a2026);border-radius:16px;padding:24px;margin-bottom:24px;">
-      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;">
-       <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#248bda,#1565a8);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="28" height="28" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-         <path d="m4.02 7h11.945c.33 0 .6.27.6.615 0 .105-.015.21-.075.3l-5.56 10.02c-.33.6-1.08.81-1.665.48-.21-.12-.375-.285-.48-.495l-5.305-10.02c-.15-.3-.045-.675.255-.825.09-.045.18-.075.285-.075z" fill="white"/>
+     <div class="me-wallet-card me-section-top" id="me-card">
+      <div class="me-wallet-top" id="me-connected-view" style="display:none">
+       <div class="me-avatar">
+        <svg viewBox="0 0 20 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+         <path d="m3.35 6.5h13.3c.28 0 .5.23.5.51 0 .09-.01.17-.06.25l-6.3 11.35c-.27.5-.9.67-1.39.4-.17-.1-.31-.24-.4-.41L3.4 7.26c-.12-.25-.04-.56.21-.69.08-.03.15-.06.24-.06z" fill="white"/>
         </svg>
        </div>
-       <div style="flex:1;min-width:0;">
-        <div style="color:var(--text-color,#fff);font-size:18px;font-weight:700;margin-bottom:4px;">My Profile</div>
-        <div id="me-wallet-addr" style="color:var(--hint-color,#8794a1);font-size:13px;font-family:monospace;word-break:break-all;"></div>
+       <div class="me-wallet-info">
+        <div class="me-wallet-title" id="me-addr-short">Connected</div>
+        <div class="me-wallet-addr" id="me-addr-full"></div>
        </div>
+       <button class="me-disconnect ton-logout-link">Disconnect</button>
       </div>
-      <div id="me-not-connected" style="display:none;text-align:center;padding:16px 0 8px;">
-       <div style="color:var(--hint-color,#8794a1);margin-bottom:16px;">Connect your TON wallet to view your profile, bids and assets.</div>
-       <button class="btn btn-primary ton-auth-link" style="min-width:180px;">
+      <div class="me-not-connected" id="me-not-connected-view">
+       <div class="me-not-connected-text">Connect your TON wallet to view your profile,<br/>bids and assets.</div>
+       <button class="btn btn-primary btn-block ton-auth-link" style="max-width:280px;margin:0 auto;display:block;">
         <i class="icon icon-connect-ton"></i>
         <span class="tm-button-label">Connect TON</span>
        </button>
       </div>
      </div>
 
-     <div class="tm-section" style="margin-bottom:24px;">
-      <div class="tm-section-header" style="padding:0 0 16px;">
-       <h3 class="tm-section-header-text" style="font-size:18px;font-weight:700;">My Assets</h3>
+     <div id="me-tabs-wrap" style="display:none">
+      <div class="me-wallet-card" style="padding:0;border-radius:0;border-top:1px solid var(--separator-color,rgba(255,255,255,.07))">
+       <div class="me-tabs" id="me-tabs">
+        <div class="me-tab active" data-tab="usernames">Usernames</div>
+        <div class="me-tab" data-tab="numbers">Numbers</div>
+        <div class="me-tab" data-tab="gifts">Gifts</div>
+        <div class="me-tab" data-tab="bids">My Bids</div>
+        <div class="me-tab" data-tab="sessions">Sessions</div>
+       </div>
       </div>
-      <div style="background:var(--section-bg,#1a2026);border-radius:12px;padding:40px 24px;text-align:center;">
-       <div style="color:var(--hint-color,#8794a1);font-size:15px;">No assets yet.</div>
-      </div>
-     </div>
-
-     <div class="tm-section" style="margin-bottom:24px;">
-      <div class="tm-section-header" style="padding:0 0 16px;">
-       <h3 class="tm-section-header-text" style="font-size:18px;font-weight:700;">My Bids</h3>
-      </div>
-      <div style="background:var(--section-bg,#1a2026);border-radius:12px;padding:40px 24px;text-align:center;">
-       <div style="color:var(--hint-color,#8794a1);font-size:15px;">No active bids.</div>
-      </div>
-     </div>
-
-     <div class="tm-section">
-      <div class="tm-section-header" style="padding:0 0 16px;">
-       <h3 class="tm-section-header-text" style="font-size:18px;font-weight:700;">My Collectible Numbers</h3>
-      </div>
-      <div style="background:var(--section-bg,#1a2026);border-radius:12px;padding:40px 24px;text-align:center;">
-       <div style="color:var(--hint-color,#8794a1);font-size:15px;">No collectible numbers.</div>
+      <div class="me-section">
+       <div id="me-pane-usernames" class="me-pane">
+        <div class="me-empty">
+         <div class="me-empty-icon">@</div>
+         No usernames yet.<br/>
+         <a href="/" style="color:var(--accent-color,#39ade7)">Browse auctions</a>
+        </div>
+       </div>
+       <div id="me-pane-numbers" class="me-pane" style="display:none">
+        <div class="me-empty">
+         <div class="me-empty-icon">+888</div>
+         No collectible numbers.
+        </div>
+       </div>
+       <div id="me-pane-gifts" class="me-pane" style="display:none">
+        <div class="me-empty">
+         <div class="me-empty-icon">🎁</div>
+         No gifts yet.<br/>
+         <a href="/gifts" style="color:var(--accent-color,#39ade7)">Browse gifts</a>
+        </div>
+       </div>
+       <div id="me-pane-bids" class="me-pane" style="display:none">
+        <div class="me-empty">
+         <div class="me-empty-icon">⚡</div>
+         No active bids.
+        </div>
+       </div>
+       <div id="me-pane-sessions" class="me-pane" style="display:none">
+        <div class="me-empty">
+         <div class="me-empty-icon">🔐</div>
+         No active sessions.
+        </div>
+       </div>
       </div>
      </div>
 
     </div>
    </main>
    <script id="aj_script">
-(function() {
-  function shortAddr(addr) {
-    if (!addr || addr.length < 10) return addr;
-    return addr.slice(0, 6) + '\u2026' + addr.slice(-4);
+(function(){
+  function shortAddr(a){
+    if(!a||a.length<10) return a||'';
+    return a.slice(0,6)+'\u2026'+a.slice(-4);
   }
-  function getWalletAddr() {
-    try {
-      var keys = Object.keys(localStorage);
-      for (var i = 0; i < keys.length; i++) {
-        if (keys[i].indexOf('ton') !== -1 || keys[i].indexOf('wallet') !== -1) {
-          try {
-            var val = JSON.parse(localStorage.getItem(keys[i]));
-            if (val && val.account && val.account.address) return val.account.address;
-            if (val && val.address) return val.address;
-          } catch(e) {}
+  function getWalletAddr(){
+    try{
+      var keys=Object.keys(localStorage);
+      for(var i=0;i<keys.length;i++){
+        var k=keys[i];
+        if(k.indexOf('ton')!==-1||k.indexOf('wallet')!==-1||k.indexOf('Wallet')!==-1){
+          try{
+            var v=JSON.parse(localStorage.getItem(k));
+            if(v&&v.account&&v.account.address) return v.account.address;
+            if(v&&v.address) return v.address;
+          }catch(e){}
         }
       }
-    } catch(e) {}
+    }catch(e){}
     return null;
   }
-  var addr = getWalletAddr();
-  var $addr = document.getElementById('me-wallet-addr');
-  var $notConn = document.getElementById('me-not-connected');
-  if (addr) {
-    if ($addr) $addr.textContent = shortAddr(addr);
-    if ($notConn) $notConn.style.display = 'none';
+  var addr=getWalletAddr();
+  var $conn=document.getElementById('me-connected-view');
+  var $notConn=document.getElementById('me-not-connected-view');
+  var $tabs=document.getElementById('me-tabs-wrap');
+  if(addr){
+    document.getElementById('me-addr-short').textContent=shortAddr(addr);
+    document.getElementById('me-addr-full').textContent=addr;
+    $conn.style.display='flex';
+    $notConn.style.display='none';
+    $tabs.style.display='block';
   } else {
-    if ($addr) $addr.textContent = 'Not connected';
-    if ($notConn) $notConn.style.display = 'block';
+    $conn.style.display='none';
+    $notConn.style.display='block';
+    $tabs.style.display='none';
+  }
+  // Tab switching
+  var tabs=document.querySelectorAll('.me-tab');
+  for(var i=0;i<tabs.length;i++){
+    tabs[i].addEventListener('click',function(){
+      var t=this.getAttribute('data-tab');
+      document.querySelectorAll('.me-tab').forEach(function(el){el.classList.remove('active');});
+      this.classList.add('active');
+      document.querySelectorAll('.me-pane').forEach(function(el){el.style.display='none';});
+      var pane=document.getElementById('me-pane-'+t);
+      if(pane) pane.style.display='block';
+    });
   }
 })();
    </script>
