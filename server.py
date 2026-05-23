@@ -819,6 +819,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
         method = params.get("method", [""])[0]
 
         if method == "searchAuctions":
+            # Load-more (pagination) requests — return empty to stop infinite loop
+            offset_id = params.get("offset_id", [""])[0]
+            if offset_id:
+                self.send_json({"ok": 1, "part": 1, "body": "", "foot": ""})
+                return
+
             sort_val   = params.get("sort",   ["price_desc"])[0]
             filter_val = params.get("filter", [""])[0]
 

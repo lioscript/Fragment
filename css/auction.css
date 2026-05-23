@@ -3138,6 +3138,7 @@ a.tm-table-action-link:hover {
 .tm-section-buttons {
   display: flex;
   flex-direction: row;
+  align-self: flex-start;
 }
 .tm-section-buttons > .btn {
   flex-grow: 1;
