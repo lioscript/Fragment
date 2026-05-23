@@ -148,33 +148,14 @@
     </div>
    </footer>
    <script id="aj_script">
+/* Quick initial check for AJAX navigation (tonConnectUI already exists) */
 (function(){
-  function getWalletAddr(){
-    try {
-      if(window.Aj&&Aj.globalState&&Aj.globalState.tonConnectUI){
-        var w=Aj.globalState.tonConnectUI.wallet;
-        if(w&&w.account&&w.account.address) return w.account.address;
-      }
-    }catch(e){}
-    try {
-      var keys=Object.keys(localStorage);
-      for(var i=0;i<keys.length;i++){
-        var k=keys[i];
-        if(k.indexOf('ton')!==-1||k.indexOf('wallet')!==-1||k.indexOf('Wallet')!==-1){
-          try{
-            var v=JSON.parse(localStorage.getItem(k));
-            if(v&&v.account&&v.account.address) return v.account.address;
-            if(v&&v.address) return v.address;
-          }catch(e){}
-        }
-      }
-    }catch(e){}
-    return null;
-  }
-  function applyWalletState(){
-    var addr=getWalletAddr();
+  try{
+    var ui=window.Aj&&Aj.globalState&&Aj.globalState.tonConnectUI;
+    var addr=ui&&ui.wallet&&ui.wallet.account&&ui.wallet.account.address;
     var $conn=document.getElementById('me-wallet-connected');
     var $notConn=document.getElementById('me-wallet-not-connected');
+    if(!$conn||!$notConn) return;
     if(addr){
       var head=addr.slice(0,Math.min(24,addr.length));
       var tail=addr.length>24?addr.slice(-Math.min(24,addr.length-24)):'';
@@ -186,10 +167,7 @@
       $conn.style.display='none';
       $notConn.style.display='block';
     }
-  }
-  applyWalletState();
-  document.addEventListener('ton-connect-status-change',applyWalletState);
-  setTimeout(applyWalletState,800);
+  }catch(e){}
 })();
    </script>
   </div>
@@ -226,17 +204,34 @@ Aj.onUnload(function(state){
   $(document).off('click','.login-link');
 });
 Wallet.init({"address":false,"ton_proof":"47a6bf0d9b5a27b881","logged_in":false,"version":2});
+/* Profile page wallet state — fires on every page load (first load + AJAX nav) */
 Aj.onLoad(function(){
+  function applyWalletState(){
+    var ui=Aj.globalState.tonConnectUI;
+    var addr=(ui&&ui.wallet&&ui.wallet.account&&ui.wallet.account.address)||null;
+    var connEl=document.getElementById('me-wallet-connected');
+    var notEl=document.getElementById('me-wallet-not-connected');
+    if(!connEl||!notEl) return;
+    if(addr){
+      var head=addr.slice(0,Math.min(24,addr.length));
+      var tail=addr.length>24?addr.slice(-Math.min(24,addr.length-24)):'';
+      document.getElementById('me-wallet-addr-display').innerHTML=
+        '<span class="tm-wallet"><span class="head">'+head+'</span><span class="middle"></span>'+(tail?'<span class="tail">'+tail+'</span>':'')+'</span>';
+      connEl.style.display='block';
+      notEl.style.display='none';
+    } else {
+      connEl.style.display='none';
+      notEl.style.display='block';
+    }
+  }
+  /* Immediate check: works on AJAX navigation where tonConnectUI already exists */
+  applyWalletState();
   var ui=Aj.globalState.tonConnectUI;
   if(ui){
-    ui.onStatusChange(function(w){
-      var connEl=document.getElementById('me-wallet-connected');
-      var notEl=document.getElementById('me-wallet-not-connected');
-      if(!w||!w.account){
-        if(connEl) connEl.style.display='none';
-        if(notEl) notEl.style.display='block';
-      }
-    });
+    /* connectionRestored handles first full page load (resolves async after wallet restore) */
+    ui.connectionRestored.then(applyWalletState);
+    /* onStatusChange handles connect/disconnect events */
+    ui.onStatusChange(applyWalletState);
   }
 });
 Aj.pageLoaded();

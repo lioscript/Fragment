@@ -1061,10 +1061,20 @@ var Wallet = {
       if (wallet && wallet.account) {
         if (authAddress && authAddress != wallet.account.address) {
           Wallet.disconnect();
+        } else {
+          var addr = wallet.account.address || '';
+          var short = addr.length > 8 ? addr.slice(0, 4) + '\u2026' + addr.slice(-4) : addr;
+          $('.ton-auth-link .tm-button-label').text(short || 'Connected');
+          $('.ton-auth-link').addClass('tm-wallet-connected');
+          $('.tm-wallet-menu-addr').text(short || 'Connected');
+          $('.tm-wallet-menu-disconnected').hide();
+          $('.tm-wallet-menu-connected').show();
         }
       } else {
         if (authAddress) {
           Wallet.logOut();
+        } else {
+          Wallet.resetMenuState();
         }
       }
     }

@@ -288,10 +288,10 @@ NEW_MENU_WINDOW_HTML = """<div class="tm-header-menu-window js-header-menu-windo
         <h4 class="tm-menu-subheader">My Account</h4>
         <div class="tm-menu-links">
          <a class="tm-menu-link icon-before icon-menu-profile" href="/me">My Profile</a>
-         <a class="tm-menu-link icon-before icon-menu-assets" href="/me">My Assets</a>
-         <a class="tm-menu-link icon-before icon-menu-bids" href="/me">My Bids</a>
-         <a class="tm-menu-link icon-before icon-menu-numbers" href="/me">My Collectible Numbers</a>
-         <a class="tm-menu-link icon-before icon-menu-sessions" href="/me">Active Sessions</a>
+         <a class="tm-menu-link icon-before icon-menu-assets" href="/my/assets">My Assets</a>
+         <a class="tm-menu-link icon-before icon-menu-bids" href="/my/bids">My Bids</a>
+         <a class="tm-menu-link icon-before icon-menu-numbers" href="/my/numbers">My Collectible Numbers</a>
+         <a class="tm-menu-link icon-before icon-menu-sessions" href="/my/sessions">Active Sessions</a>
          <a class="tm-menu-link icon-before icon-menu-disconnect ton-logout-link" href="#">Disconnect TON</a>
         </div>
         <h4 class="tm-menu-subheader">Platform</h4>
