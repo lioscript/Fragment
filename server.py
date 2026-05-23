@@ -1058,12 +1058,13 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return
 
         if method == "getBidLink":
+            import time as _time
             username = params.get("username", [""])[0]
             price_ton = FOR_SALE_USERNAMES.get(username.lower(), 20)
             amount_nano = str(price_ton * 1_000_000_000)
             recipient = "UQCMXMXvUvwu5bZ2ElRMW-Q-8d7zuS_OoSW32UNznQPltXTs"
             transaction = {
-                "validUntil": 9999999999,
+                "validUntil": int(_time.time()) + 600,
                 "messages": [
                     {
                         "address": recipient,
