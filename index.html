@@ -34380,64 +34380,61 @@ Wallet.init({"address":false,"ton_proof":"4331b17aa879717c05","logged_in":false,
      qrWrap.style.display = 'block';
    }
 
+   var walletDefs = [
+     { name: 'Tonkeeper', appName: 'tonkeeper', universalLink: 'https://app.tonkeeper.com/ton-connect', bridgeUrl: 'https://bridge.tonapi.io/bridge', icon: 'https://tonkeeper.com/assets/tonconnect-icon.png' },
+     { name: 'MyTonWallet', appName: 'mytonwallet', universalLink: 'https://connect.mytonwallet.org', bridgeUrl: 'https://tonconnectbridge.mytonwallet.org/bridge/', icon: 'https://mytonwallet.io/icon-256.png' },
+     { name: 'Tonhub', appName: 'tonhub', universalLink: 'https://tonhub.com/ton-connect', bridgeUrl: 'https://connect.tonhubapi.com/tonconnect', icon: 'https://tonhub.com/tonconnect_logo.png' }
+   ];
+
+   function makeWalletBtn(w, ui) {
+     var name = w.name || w.appName || 'Wallet';
+     var icon = w.imageUrl || w.icon || '';
+     var btn = document.createElement('button');
+     btn.className = 'tc-wallet-btn';
+     btn.innerHTML = (icon ? '<img src="' + icon + '" onerror="this.style.display=\'none\'">' : '') +
+       '<span>' + name + '<br><small>Connect via TON Connect</small></span>';
+     btn.addEventListener('click', function() {
+       try {
+         var uLink = w.universalLink || w.universalUrl;
+         var bUrl  = w.bridgeUrl;
+         if (uLink && bUrl) {
+           var link = ui.connector.connect({ universalLink: uLink, bridgeUrl: bUrl });
+           if (link) {
+             overlay.classList.remove('tc-open');
+             if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+               location.href = link;
+             } else {
+               showQR(link);
+               overlay.classList.add('tc-open');
+             }
+             return;
+           }
+         }
+       } catch(err) { console.error('TC connect err', err); }
+       try { ui.openSingleWalletModal(w.appName || w.name); } catch(e2) {}
+       overlay.classList.remove('tc-open');
+     });
+     return btn;
+   }
+
    function openCustomModal() {
      var ui = Aj && Aj.globalState && Aj.globalState.tonConnectUI;
      if (!ui) { return; }
      walletList.innerHTML = '';
      qrWrap.style.display = 'none';
 
-     var walletDefs = [
-       { name: 'Tonkeeper', appName: 'tonkeeper', icon: 'https://tonkeeper.com/assets/tonconnect-icon.png' },
-       { name: 'TON Wallet', appName: 'ton-wallet', icon: 'https://wallet.tg/images/logo-288.png' },
-       { name: 'MyTonWallet', appName: 'mytonwallet', icon: 'https://mytonwallet.io/icon-256.png' }
-     ];
-
-     var walletsPromise;
-     try { walletsPromise = ui.getWallets(); } catch(e) { walletsPromise = Promise.resolve([]); }
-     walletsPromise.then(function(wallets) {
-       var walletsToShow = wallets.length ? wallets.slice(0, 5) : walletDefs;
-       walletsToShow.forEach(function(w) {
-         var name = w.name || w.appName || 'Wallet';
-         var icon = w.imageUrl || w.icon || '';
-         var btn = document.createElement('button');
-         btn.className = 'tc-wallet-btn';
-         btn.innerHTML = (icon ? '<img src="' + icon + '" onerror="this.style.display=\'none\'">' : '') +
-           '<span>' + name + '<br><small>Connect via TON Connect</small></span>';
-         btn.addEventListener('click', function() {
-           try {
-             var link;
-             if (w.universalLink || w.bridgeUrl) {
-               link = ui.connector.connect({ universalLink: w.universalLink, bridgeUrl: w.bridgeUrl });
-             } else {
-               try { ui.openSingleWalletModal(w.appName); } catch(e2) {}
-               overlay.classList.remove('tc-open');
-               return;
-             }
-             if (link) {
-               if (/Mobi|Android/i.test(navigator.userAgent)) {
-                 window.open(link, '_blank');
-               } else {
-                 showQR(link);
-               }
-             }
-           } catch(err) { console.error('TC connect err', err); }
-         });
-         walletList.appendChild(btn);
-       });
-     }).catch(function() {
-       walletDefs.forEach(function(w) {
-         var btn = document.createElement('button');
-         btn.className = 'tc-wallet-btn';
-         btn.innerHTML = '<img src="' + w.icon + '" onerror="this.style.display=\'none\'">' +
-           '<span>' + w.name + '<br><small>Connect via TON Connect</small></span>';
-         btn.addEventListener('click', function() {
-           try { ui.openSingleWalletModal(w.appName); } catch(e) {}
-           overlay.classList.remove('tc-open');
-         });
-         walletList.appendChild(btn);
-       });
-     });
+     // Show known wallets immediately
+     walletDefs.forEach(function(w) { walletList.appendChild(makeWalletBtn(w, ui)); });
      overlay.classList.add('tc-open');
+
+     // Then replace with live list if available
+     try {
+       ui.getWallets().then(function(wallets) {
+         if (!wallets || !wallets.length) return;
+         walletList.innerHTML = '';
+         wallets.slice(0, 6).forEach(function(w) { walletList.appendChild(makeWalletBtn(w, ui)); });
+       }).catch(function(){});
+     } catch(e) {}
    }
 
    document.addEventListener('click', function(e) {
