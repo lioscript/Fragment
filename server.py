@@ -192,6 +192,63 @@ GIFT_COLLECTIONS = {
 
 TON_RATE = 1.9653  # TON → USD
 
+FOR_SALE_USERNAMES = {
+    "otcbank": 20,
+    "antiscam": 20,
+    "otctelegram": 20,
+}
+
+FOR_SALE_DISPLAY = {
+    "otcbank": "otcbank",
+    "antiscam": "AntiScam",
+    "otctelegram": "otcTelegram",
+}
+
+
+def generate_sale_page(display_name, price_ton):
+    """Generate a 'For sale' product page for a username."""
+    usd = price_ton * TON_RATE
+    usd_str = f"~ ${usd:.0f}"
+    price_str = str(price_ton)
+
+    tpl = "html/page_17.html"
+    with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
+        content = f.read()
+
+    content = content.replace("ccccc", display_name)
+    content = content.replace("On auction", "For sale")
+
+    new_bid = (
+        '<div class="tm-section-box tm-section-bid-info">'
+        '<table class="table tm-table tm-table-fixed">'
+        '<thead><tr><th style="--width:100%">Sale Price</th></tr></thead>'
+        f'<tbody><tr><td><div class="table-cell">'
+        f'<div class="table-cell-value tm-value icon-before icon-ton">{price_str}</div>'
+        f'<div class="table-cell-desc">{usd_str}</div>'
+        '</div></td></tr></tbody></table></div>'
+    )
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-bid-info">.*?(?=<div class="tm-list tm-section-box tm-section-auction-info">)',
+        new_bid + '\n     ',
+        content, flags=re.DOTALL
+    )
+
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-countdown-wrap[^"]*">.*?</div>\s*</div>',
+        '',
+        content, flags=re.DOTALL
+    )
+
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-buttons">.*?</div>',
+        f'<div class="tm-section-box tm-section-buttons">'
+        f'<button class="btn btn-primary ton-auth-link">Buy for {price_str} TON</button></div>',
+        content, flags=re.DOTALL
+    )
+
+    content = content.replace("Bid History", "Sale History")
+    return content
+
 
 def gen_price(seed_str, base, lo=0.35, hi=1.8):
     """Deterministic pseudo-random price based on seed string."""
@@ -771,6 +828,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
         # /username slugs → dynamic username product page
         if file_path is None and re.match(r'^/[a-zA-Z0-9_]+$', path):
             username = path.lstrip("/")
+            username_lower = username.lower()
+            # Check if this is a for-sale username
+            if username_lower in FOR_SALE_USERNAMES:
+                display_name = FOR_SALE_DISPLAY[username_lower]
+                price = FOR_SALE_USERNAMES[username_lower]
+                content = generate_sale_page(display_name, price)
+                self.serve_content(content, is_ajax)
+                return
             # First check if there is a dedicated page mapped via /html/{username}.html
             html_route_key = f"/html/{username}.html"
             if html_route_key in PAGE_ROUTES:
