@@ -6,6 +6,155 @@ import urllib.parse
 
 VERSION = 598
 
+# Collection slug → singular display name (strip trailing 's' for singular form)
+GIFT_COLLECTIONS = {
+    "artisanbrick": "Artisan Brick",
+    "astralshard": "Astral Shard",
+    "bdaycandle": "B-Day Candle",
+    "berrybox": "Berry Box",
+    "bigyear": "Big Year",
+    "blingbinky": "Bling Binky",
+    "bondedring": "Bonded Ring",
+    "bowtie": "Bow Tie",
+    "bunnymuffin": "Bunny Muffin",
+    "candycane": "Candy Cane",
+    "chillflame": "Chill Flame",
+    "cloverpin": "Clover Pin",
+    "cookieheart": "Cookie Heart",
+    "crystalball": "Crystal Ball",
+    "cupidcharm": "Cupid Charm",
+    "deskcalendar": "Desk Calendar",
+    "diamondring": "Diamond Ring",
+    "durovscap": "Durov's Cap",
+    "easteregg": "Easter Egg",
+    "electricskull": "Electric Skull",
+    "eternalcandle": "Eternal Candle",
+    "eternalrose": "Eternal Rose",
+    "evileye": "Evil Eye",
+    "faithamulet": "Faith Amulet",
+    "flyingbroom": "Flying Broom",
+    "freshsocks": "Fresh Socks",
+    "gemsignet": "Gem Signet",
+    "genielamp": "Genie Lamp",
+    "gingercookie": "Ginger Cookie",
+    "hangingstar": "Hanging Star",
+    "happybrownie": "Happy Brownie",
+    "heartlocket": "Heart Locket",
+    "heroichelmet": "Heroic Helmet",
+    "hexpot": "Hex Pot",
+    "holidaydrink": "Holiday Drink",
+    "homemadecake": "Homemade Cake",
+    "hypnolollipop": "Hypno Lollipop",
+    "icecream": "Ice Cream",
+    "inputkey": "Input Key",
+    "instantramen": "Instant Ramen",
+    "iongem": "Ion Gem",
+    "ionicdryer": "Ionic Dryer",
+    "jackinthebox": "Jack-in-the-Box",
+    "jellybunny": "Jelly Bunny",
+    "jesterhat": "Jester Hat",
+    "jinglebells": "Jingle Bells",
+    "jollychimp": "Jolly Chimp",
+    "joyfulbundle": "Joyful Bundle",
+    "khabibspapakha": "Khabib's Papakha",
+    "kissedfrog": "Kissed Frog",
+    "lightsword": "Light Sword",
+    "lolpop": "Lol Pop",
+    "lootbag": "Loot Bag",
+    "lovecandle": "Love Candle",
+    "lovepotion": "Love Potion",
+    "lowrider": "Low Rider",
+    "lunarsnake": "Lunar Snake",
+    "lushbouquet": "Lush Bouquet",
+    "madpumpkin": "Mad Pumpkin",
+    "magicpotion": "Magic Potion",
+    "mightyarm": "Mighty Arm",
+    "minioscar": "Mini Oscar",
+    "moneypot": "Money Pot",
+    "moodpack": "Mood Pack",
+    "moonpendant": "Moon Pendant",
+    "moussecake": "Mousse Cake",
+    "nailbracelet": "Nail Bracelet",
+    "nekohelmet": "Neko Helmet",
+    "partysparkler": "Party Sparkler",
+    "perfumebottle": "Perfume Bottle",
+    "petsnake": "Pet Snake",
+    "plushpepe": "Plush Pepe",
+    "poolfloat": "Pool Float",
+    "preciouspeach": "Precious Peach",
+    "prettyposy": "Pretty Posy",
+    "rarebird": "Rare Bird",
+    "recordplayer": "Record Player",
+    "restlessjar": "Restless Jar",
+    "sakuraflower": "Sakura Flower",
+    "santahat": "Santa Hat",
+    "scaredcat": "Scared Cat",
+    "sharptongue": "Sharp Tongue",
+    "signetring": "Signet Ring",
+    "skullflower": "Skull Flower",
+    "skystilettos": "Sky Stilettos",
+    "sleighbell": "Sleigh Bell",
+    "snakebox": "Snake Box",
+    "snoopcigar": "Snoop Cigar",
+    "snoopdogg": "Snoop Dogg",
+    "snowglobe": "Snow Globe",
+    "snowmittens": "Snow Mittens",
+    "spicedwine": "Spiced Wine",
+    "springbasket": "Spring Basket",
+    "spyagaric": "Spy Agaric",
+    "starnotepad": "Star Notepad",
+    "stellarrocket": "Stellar Rocket",
+    "swagbag": "Swag Bag",
+    "swisswatch": "Swiss Watch",
+    "tamagadget": "Tama Gadget",
+    "timelessbook": "Timeless Book",
+    "tophat": "Top Hat",
+    "toybear": "Toy Bear",
+    "trappedheart": "Trapped Heart",
+    "ufcstrike": "UFC Strike",
+    "valentinebox": "Valentine Box",
+    "vicecream": "Vice Cream",
+    "victorymedal": "Victory Medal",
+    "vintagecigar": "Vintage Cigar",
+    "voodoodoll": "Voodoo Doll",
+    "westsidesign": "Westside Sign",
+    "whipcupcake": "Whip Cupcake",
+    "winterwreath": "Winter Wreath",
+    "witchhat": "Witch Hat",
+    "xmasstocking": "Xmas Stocking",
+}
+
+
+def format_number_display(number_id):
+    """Convert '88800001312' → '+888 0000 1312'"""
+    digits = str(number_id)
+    if digits.startswith("888") and len(digits) >= 11:
+        mid = digits[3:7]
+        end = digits[7:11]
+        return f"+888 {mid} {end}"
+    return f"+{digits}"
+
+
+def gift_slug_to_title(slug):
+    """Convert 'plushpepe-1821' → 'Plush Pepe #1821'"""
+    parts = slug.rsplit("-", 1)
+    if len(parts) == 2 and parts[1].isdigit():
+        collection_slug = parts[0]
+        number = parts[1]
+        collection_name = GIFT_COLLECTIONS.get(collection_slug)
+        if not collection_name:
+            # Fallback: title-case the slug
+            collection_name = collection_slug.title()
+        return f"{collection_name} #{number}"
+    return slug.replace("-", " ").title()
+
+
+def apply_dynamic_replacements(content, replacements):
+    """Apply a list of (old, new) replacements to content."""
+    for old, new in replacements:
+        content = content.replace(old, new)
+    return content
+
 PAGE_ROUTES = {
     "/": "index.html",
     "/numbers": "html/page_2.html",
@@ -257,6 +406,46 @@ class Handler(http.server.BaseHTTPRequestHandler):
             resp["j"] = page["aj_script"]
         return resp
 
+    def send_dynamic_page(self, content):
+        """Send pre-generated dynamic HTML content."""
+        content = re.sub(r'"ton_proof"\s*:\s*"[^"]*"', '"ton_proof":""', content)
+        if "<base " not in content:
+            content = content.replace("<head>", '<head>\n  <base href="/">', 1)
+            if '<base href="/">' not in content:
+                content = re.sub(r'(<head[^>]*>)', r'\1\n  <base href="/">', content, count=1)
+        data = content.encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "text/html; charset=utf-8")
+        self.send_header("Content-Length", str(len(data)))
+        self.send_header("Cache-Control", "no-store, no-cache, must-revalidate")
+        self.send_header("Pragma", "no-cache")
+        self.end_headers()
+        self.wfile.write(data)
+
+    def build_ajax_dynamic(self, content):
+        """Build AJAX JSON response from pre-generated dynamic HTML."""
+        title_match = re.search(r"<title[^>]*>\s*(.*?)\s*</title>", content, re.DOTALL)
+        title = title_match.group(1).strip() if title_match else "Fragment"
+        rc_match = re.search(r'<html[^>]*class=["\']([^"\']*)["\']', content)
+        rc = rc_match.group(1) if rc_match else ""
+        raw_aj_html = extract_aj_content(content)
+        aj_script = extract_aj_script(content)
+        aj_html = strip_scripts_from_html(raw_aj_html)
+        resp = {"v": VERSION, "h": aj_html, "t": title, "rc": rc}
+        if aj_script:
+            resp["j"] = aj_script
+        return resp
+
+    def serve_content(self, content, is_ajax):
+        """Serve pre-generated HTML content as full page or AJAX."""
+        if is_ajax:
+            try:
+                self.send_json(self.build_ajax_dynamic(content))
+            except Exception:
+                self.send_dynamic_page(content)
+        else:
+            self.send_dynamic_page(content)
+
     def do_GET(self):
         raw_path = self.path.split("?")[0]
         path = raw_path
@@ -305,23 +494,65 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if file_path is None and path.startswith("/html/") and path.endswith(".html"):
             file_path = "html/page_17.html"
 
-        # /number/* → number product page
+        # /number/ID → dynamic number product page
         if file_path is None and path.startswith("/number/"):
-            file_path = "html/page_number.html" if os.path.isfile("html/page_number.html") else "html/page_17.html"
+            number_id = path[len("/number/"):].strip("/")
+            tpl = "html/page_number.html" if os.path.isfile("html/page_number.html") else "html/page_17.html"
+            with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            display = format_number_display(number_id)
+            content = apply_dynamic_replacements(content, [
+                ("+88800001312",         f"+{number_id}"),
+                ("88800001312",          number_id),
+                ("+888 0000 1312",       display),
+                ("ccccc \u2013\xa0Fragment", f"{display} \u2013\xa0Fragment"),
+                ("ccccc \u2013 Fragment",    f"{display} \u2013 Fragment"),
+                ("ccccc – Fragment",         f"{display} – Fragment"),
+            ])
+            self.serve_content(content, is_ajax)
+            return
 
         # /gifts/collection → gifts listing filtered by collection
         if file_path is None and re.match(r'^/gifts/[^/]+$', path):
             file_path = "html/page_3.html"
 
-        # /gift/item or /gifts/collection/item → gift product page
+        # /gift/slug or /gifts/collection/slug → dynamic gift product page
         if file_path is None and (re.match(r'^/gift/', path) or re.match(r'^/gifts/[^/]+/.+', path)):
-            file_path = "html/page_gift.html" if os.path.isfile("html/page_gift.html") else "html/page_17.html"
+            # Extract gift slug from the URL
+            m = re.match(r'^/gift/([^/?]+)', path)
+            if not m:
+                m = re.match(r'^/gifts/[^/]+/([^/?]+)', path)
+            gift_slug = m.group(1) if m else "plushpepe-1821"
+            title = gift_slug_to_title(gift_slug)
+            tpl = "html/page_gift.html" if os.path.isfile("html/page_gift.html") else "html/page_17.html"
+            with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
+                content = f.read()
+            content = apply_dynamic_replacements(content, [
+                ("plushpepe-1821",   gift_slug),
+                ("Plush Pepe #1821", title),
+                ("/images/plushpepe-1821.medium.jpg", f"/images/{gift_slug}.medium.jpg"),
+                ("ccccc \u2013\xa0Fragment", f"{title} \u2013\xa0Fragment"),
+                ("ccccc \u2013 Fragment",    f"{title} \u2013 Fragment"),
+                ("ccccc – Fragment",         f"{title} – Fragment"),
+            ])
+            self.serve_content(content, is_ajax)
+            return
 
-        # /username slugs → username product page
+        # /username slugs → dynamic username product page
         if file_path is None and re.match(r'^/[a-zA-Z0-9_]+$', path):
-            slug = path.lstrip("/")
-            candidate = f"html/{slug}.html"
-            file_path = candidate if os.path.isfile(candidate) else "html/page_17.html"
+            username = path.lstrip("/")
+            candidate = f"html/{username}.html"
+            if os.path.isfile(candidate):
+                file_path = candidate
+            else:
+                tpl = "html/page_17.html"
+                with open(tpl, "r", encoding="utf-8", errors="ignore") as f:
+                    content = f.read()
+                content = apply_dynamic_replacements(content, [
+                    ("ccccc", username),
+                ])
+                self.serve_content(content, is_ajax)
+                return
 
         if file_path:
             if is_ajax:
