@@ -53,6 +53,15 @@
   <div class="card">
     <div class="card-title">New NFT Listing</div>
 
+    <label>Fragment.com link <span style="color:#248bda;font-size:11px;font-weight:400;">(вставте — всі поля заповняться автоматично)</span></label>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <input type="text" id="frag-url" placeholder="https://fragment.com/gift/vintagecigar-16398" oninput="onUrlChange()" style="flex:1;"/>
+      <button class="btn-gen" id="btn-fetch" onclick="fetchFromUrl()" style="width:auto;padding:11px 18px;white-space:nowrap;">↓ Завантажити</button>
+    </div>
+    <div id="fetch-status" style="font-size:12px;margin-top:6px;min-height:16px;"></div>
+
+    <div class="section-divider"></div>
+
     <label>Gift slug (collection-number)</label>
     <input type="text" id="slug" placeholder="e.g. vintagecigar-16398" oninput="onSlugChange()"/>
 
@@ -142,6 +151,58 @@ function slugToTitle(slug) {
   var coll = slug.slice(0, lastDash);
   var collTitle = coll.replace(/-/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
   return collTitle + ' #' + num;
+}
+
+function setStatus(msg, color) {
+  var el = document.getElementById('fetch-status');
+  el.textContent = msg;
+  el.style.color = color || '#8794a1';
+}
+
+function onUrlChange() {
+  var url = document.getElementById('frag-url').value.trim();
+  // Auto-extract slug from URL and fill slug field
+  var m = url.match(/\/gift\/([a-z0-9\-]+)/i);
+  if (m) {
+    var slug = m[1].toLowerCase();
+    document.getElementById('slug').value = slug;
+    document.getElementById('title').value = slugToTitle(slug);
+    document.getElementById('img-preview').src = '/images/' + slug + '.medium.jpg';
+  }
+}
+
+function fetchFromUrl() {
+  var url = document.getElementById('frag-url').value.trim();
+  if (!url) { setStatus('Введіть посилання', '#e05050'); return; }
+  var btn = document.getElementById('btn-fetch');
+  btn.disabled = true;
+  btn.textContent = '…';
+  setStatus('Завантаження…', '#8794a1');
+  fetch('/api/fetch-nft?url=' + encodeURIComponent(url))
+    .then(function(r) { return r.json(); })
+    .then(function(resp) {
+      btn.disabled = false;
+      btn.textContent = '↓ Завантажити';
+      if (!resp.ok) { setStatus('Помилка: ' + (resp.error || 'невідома'), '#e05050'); return; }
+      var d = resp.data;
+      if (d.slug)         { document.getElementById('slug').value  = d.slug; document.getElementById('img-preview').src = '/images/' + d.slug + '.medium.jpg'; }
+      if (d.title)        document.getElementById('title').value        = d.title;
+      if (d.model)        document.getElementById('model').value        = d.model;
+      if (d.model_pct)    document.getElementById('model_pct').value    = d.model_pct;
+      if (d.backdrop)     document.getElementById('backdrop').value     = d.backdrop;
+      if (d.backdrop_pct) document.getElementById('backdrop_pct').value = d.backdrop_pct;
+      if (d.symbol)       document.getElementById('symbol').value       = d.symbol;
+      if (d.symbol_pct)   document.getElementById('symbol_pct').value   = d.symbol_pct;
+      if (d.issued)       document.getElementById('issued').value       = d.issued;
+      if (d.gifted_text)  document.getElementById('gifted').value       = d.gifted_text;
+      var filled = Object.keys(d).length;
+      setStatus('✓ Заповнено ' + filled + ' полів. Перевірте і вкажіть ціну.', '#4caf50');
+    })
+    .catch(function(e) {
+      btn.disabled = false;
+      btn.textContent = '↓ Завантажити';
+      setStatus('Мережева помилка: ' + e.message, '#e05050');
+    });
 }
 
 function onSlugChange() {

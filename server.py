@@ -998,9 +998,58 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
 
+    def _build_dynamic_gift_cards(self):
+        """Build HTML cards for all dynamic listings to inject into page_3.html."""
+        if not DYNAMIC_LISTINGS:
+            return ""
+        cards = []
+        for listing in DYNAMIC_LISTINGS.values():
+            slug = listing.get("slug", "")
+            title = listing.get("title", slug)
+            price = listing.get("price", "")
+            # Parse collection name and number from title e.g. "Vintage Cigar #16398"
+            m = re.match(r'^(.+?)\s*#(\d+)$', title)
+            if m:
+                coll_name = m.group(1).strip()
+                num = "#" + m.group(2)
+            else:
+                coll_name = title
+                num = ""
+            cards.append(
+                f'         <a class="tm-grid-item" href="/nft/{slug}">\n'
+                f'          <div class="tm-grid-item-thumb">\n'
+                f'           <img class="tm-grid-thumb" src="images/{slug}.medium.jpg"/>\n'
+                f'           <div class="tm-grid-item-num thin-only">{num}</div>\n'
+                f'           <div class="tm-grid-item-desc thin-only"></div>\n'
+                f'          </div>\n'
+                f'          <div class="tm-grid-item-content">\n'
+                f'           <div class="tm-grid-item-name wide-only">\n'
+                f'            <span class="item-name">{coll_name}</span>\n'
+                f'            <span class="item-num">{num}</span>\n'
+                f'           </div>\n'
+                f'           <div class="tm-grid-item-desc wide-only">\n'
+                f'            <time class="short">Today</time>\n'
+                f'           </div>\n'
+                f'           <div class="tm-grid-item-values">\n'
+                f'            <div class="tm-grid-item-value tm-value icon-before icon-ton">{price}</div>\n'
+                f'            <div class="tm-grid-item-status tm-status-sale">For sale</div>\n'
+                f'           </div>\n'
+                f'          </div>\n'
+                f'         </a>\n'
+            )
+        return "".join(cards)
+
     def send_full_page(self, file_path):
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
+        # Inject dynamic gift listing cards into page_3.html
+        if file_path == "html/page_3.html" and DYNAMIC_LISTINGS:
+            inject = self._build_dynamic_gift_cards()
+            content = content.replace(
+                '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
+                inject + '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
+                1
+            )
         # Fix ton_proof in full page loads too
         content = re.sub(r'"ton_proof"\s*:\s*"[^"]*"', '"ton_proof":""', content)
         if "<base " not in content:
@@ -1254,6 +1303,63 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if file_path is None and path == "/api/listings":
             listings = list(DYNAMIC_LISTINGS.values())
             self.send_json({"ok": 1, "listings": listings})
+            return
+
+        # /api/fetch-nft?url=... → fetch fragment.com gift page and parse characteristics
+        if file_path is None and path == "/api/fetch-nft":
+            qs = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            url = qs.get("url", [""])[0].strip()
+            if not url:
+                self.send_json({"ok": 0, "error": "url required"})
+                return
+            try:
+                import urllib.request as _ureq
+                req = _ureq.Request(url, headers={
+                    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36",
+                    "Accept": "text/html,application/xhtml+xml",
+                    "Accept-Language": "en-US,en;q=0.9",
+                })
+                with _ureq.urlopen(req, timeout=10) as resp:
+                    html_raw = resp.read().decode("utf-8", errors="ignore")
+                result = {}
+                # Title from <title> or h1
+                t = re.search(r'<title[^>]*>([^<]+)</title>', html_raw)
+                if t:
+                    title_raw = t.group(1).strip().split("–")[0].split("|")[0].strip()
+                    result["title"] = title_raw
+                h1 = re.search(r'<h1[^>]*class="[^"]*tm-section-header[^"]*"[^>]*>\s*([^<]+)', html_raw)
+                if h1:
+                    result["title"] = h1.group(1).strip()
+                # Attributes: model, backdrop, symbol, issued, gifted
+                attr_names  = re.findall(r'class="[^"]*tm-gift-attr-name[^"]*"[^>]*>([^<]+)<', html_raw)
+                attr_values = re.findall(r'class="[^"]*tm-gift-attr-value[^"]*"[^>]*>([^<]+)<', html_raw)
+                attr_rarity = re.findall(r'class="[^"]*tm-gift-attr-rarity[^"]*"[^>]*>([^<]+)<', html_raw)
+                attr_map = {}
+                for i, name in enumerate(attr_names):
+                    val = attr_values[i] if i < len(attr_values) else ""
+                    rar = attr_rarity[i] if i < len(attr_rarity) else ""
+                    attr_map[name.strip().lower()] = (val.strip(), rar.strip())
+                if "model" in attr_map:
+                    result["model"], result["model_pct"] = attr_map["model"]
+                if "backdrop" in attr_map:
+                    result["backdrop"], result["backdrop_pct"] = attr_map["backdrop"]
+                if "symbol" in attr_map:
+                    result["symbol"], result["symbol_pct"] = attr_map["symbol"]
+                # Issued
+                iss = re.search(r'(\d[\d,]+)\s+of\s+(\d[\d,]+)', html_raw)
+                if iss:
+                    result["issued"] = iss.group(1).replace(",","") + " of " + iss.group(2).replace(",","")
+                # Gifted text
+                gift_m = re.search(r'Gifted by[^<]{5,120}', html_raw)
+                if gift_m:
+                    result["gifted_text"] = re.sub(r'<[^>]+>', '', gift_m.group(0)).strip()
+                # Slug from URL
+                slug_m = re.search(r'/gift/([a-z0-9\-]+)', url)
+                if slug_m:
+                    result["slug"] = slug_m.group(1)
+                self.send_json({"ok": 1, "data": result})
+            except Exception as e:
+                self.send_json({"ok": 0, "error": str(e)})
             return
 
         # /username slugs → dynamic username product page
