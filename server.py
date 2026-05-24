@@ -211,7 +211,7 @@ FOR_SALE_END_DATES = {
 }
 
 FOR_SALE_GIFTS = {
-    "vintagecigar-16398": {"price": 25, "title": "Vintage Cigar #16398"},
+    "vintagecigar-16398": {"price": 15, "title": "Vintage Cigar #16398"},
 }
 
 
