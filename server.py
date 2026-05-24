@@ -297,30 +297,13 @@ def generate_gift_for_sale_page(gift_id):
         content, flags=re.DOTALL
     )
 
-    # --- 4-row Ownership History (30–50 TON, anonymous wallets) ---
+    # --- 1-row Ownership History (31 TON, 2025, anonymous wallet) ---
     w1 = "UQBx7...3kR2F"
-    w2 = "EQDm9...7pL4W"
-    w3 = "UQAn4...9cT1X"
     history_rows = (
         '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">30</div></div></td>'
-        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>12 Jan 2026 at 09:15</time></span></div></div></td>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">31</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>14 Nov 2025 at 17:42</time></span></div></div></td>'
         f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">{w1}</span></a></div></td>'
-        '\n       </tr>'
-        '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">38</div></div></td>'
-        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>3 Mar 2026 at 14:22</time></span></div></div></td>'
-        f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">{w2}</span></a></div></td>'
-        '\n       </tr>'
-        '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">44</div></div></td>'
-        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>19 Apr 2026 at 18:05</time></span></div></div></td>'
-        f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">{w3}</span></a></div></td>'
-        '\n       </tr>'
-        '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">50</div></div></td>'
-        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>10 May 2026 at 11:30</time></span></div></div></td>'
-        f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/{owner_full}" target="_blank"><span class="short">{owner_short}</span></a></div></td>'
         '\n       </tr>\n       '
     )
     # Target only the tbody inside the Ownership History section
@@ -328,6 +311,33 @@ def generate_gift_for_sale_page(gift_id):
         r'(Ownership History.*?<tfoot>.*?</tfoot>\s*<tbody>).*?(</tbody>)',
         r'\g<1>' + history_rows + r'\g<2>',
         content, flags=re.DOTALL
+    )
+
+    # --- Fix og: meta tags for correct link preview ---
+    content = re.sub(
+        r'<meta content="https://nft\.fragment\.com/username/[^"]*" property="og:image"/>',
+        f'<meta content="/images/{img_slug}.medium.jpg" property="og:image"/>',
+        content
+    )
+    content = re.sub(
+        r'<meta content="[^"]*" property="og:url"/>',
+        f'<meta content="https://fragment.com/nft/{slug}" property="og:url"/>',
+        content
+    )
+    content = re.sub(
+        r'<meta content="[^"]*" property="og:title"/>',
+        f'<meta content="{title} on Fragment" property="og:title"/>',
+        content
+    )
+    content = re.sub(
+        r'<meta content="[^"]*" property="og:description"/>',
+        f'<meta content="{title} is available for sale on Fragment for {price_str} TON." property="og:description"/>',
+        content
+    )
+    content = re.sub(
+        r'<link href="https://fragment\.com/gift/[^"]*" rel="canonical"/>',
+        f'<link href="https://fragment.com/nft/{slug}" rel="canonical"/>',
+        content
     )
 
     # --- Center image and add top margin to title ---
