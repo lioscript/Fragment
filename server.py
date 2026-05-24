@@ -994,6 +994,25 @@ def parse_page(filepath):
     return result
 
 
+def parse_page_from_string(content):
+    """Same as parse_page but works on an already-loaded string (no caching)."""
+    title_match = re.search(r"<title[^>]*>\s*(.*?)\s*</title>", content, re.DOTALL)
+    title = title_match.group(1).strip() if title_match else "Fragment"
+    rc_match = re.search(r'<html[^>]*class=["\']([^"\']*)["\']', content)
+    rc = rc_match.group(1) if rc_match else ""
+    raw_aj_html = extract_aj_content(content)
+    aj_script = extract_aj_script(content)
+    aj_html = strip_scripts_from_html(raw_aj_html)
+    search_html = extract_search_html(content)
+    return {
+        "title": title,
+        "rc": rc,
+        "aj_html": aj_html,
+        "aj_script": aj_script,
+        "search_html": search_html,
+    }
+
+
 class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, format, *args):
         pass
@@ -1095,7 +1114,18 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.wfile.write(png_1x1)
 
     def build_ajax_response(self, file_path):
-        page = parse_page(file_path)
+        if file_path == "html/page_3.html" and DYNAMIC_LISTINGS:
+            with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                raw = f.read()
+            inject = self._build_dynamic_gift_cards()
+            raw = raw.replace(
+                '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
+                inject + '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
+                1
+            )
+            page = parse_page_from_string(raw)
+        else:
+            page = parse_page(file_path)
         resp = {
             "v": VERSION,
             "h": page["aj_html"],
