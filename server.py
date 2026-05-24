@@ -215,7 +215,7 @@ FOR_SALE_GIFTS = {
 }
 
 
-def generate_gift_for_sale_page(gift_id):
+def generate_gift_for_sale_page(gift_id, host=""):
     """Generate a 'For sale' product page for a gift NFT."""
     cfg = FOR_SALE_GIFTS.get(gift_id.lower())
     if not cfg:
@@ -227,6 +227,13 @@ def generate_gift_for_sale_page(gift_id):
     price_str = str(price_ton)
     slug = gift_id.lower()          # vintagecigar-16398
     img_slug = "vintagecigar-16398"  # new dedicated image
+
+    # Build absolute image URL for og:image (needed for link previews)
+    if host:
+        scheme = "https" if not host.startswith("localhost") else "http"
+        abs_img_url = f"{scheme}://{host}/images/{img_slug}.medium.jpg"
+    else:
+        abs_img_url = f"/images/{img_slug}.medium.jpg"
 
     with open("html/page_gift.html", "r", encoding="utf-8", errors="ignore") as f:
         content = f.read()
@@ -270,10 +277,30 @@ def generate_gift_for_sale_page(gift_id):
         new_bid + '\n    ',
         content, flags=re.DOTALL
     )
-    # Remove the tm-section-auction-info block (shows gift attributes like Model/Backdrop)
+    # Replace the tm-section-auction-info block with Vintage Cigar #16398 specific attributes
+    new_auction_info = (
+        '<div class="tm-list tm-section-box tm-section-auction-info">'
+        f'<dl class="tm-list-item"><dt class="tm-list-item-title">Owner</dt>'
+        f'<dd class="tm-list-item-value"><span class="accent-color">{owner_short}</span></dd></dl>'
+        '<dl class="tm-list-item"><dt class="tm-list-item-title">Model</dt>'
+        '<dd class="tm-list-item-value"><span class="accent-color">Oil Baron'
+        '<span class="tm-label-secondary"> 0.5%</span></span></dd></dl>'
+        '<dl class="tm-list-item"><dt class="tm-list-item-title">Backdrop</dt>'
+        '<dd class="tm-list-item-value"><span class="accent-color">Black'
+        '<span class="tm-label-secondary"> 2%</span></span></dd></dl>'
+        '<dl class="tm-list-item"><dt class="tm-list-item-title">Symbol</dt>'
+        '<dd class="tm-list-item-value"><span class="accent-color">Sun Mountain'
+        '<span class="tm-label-secondary"> 0.8%</span></span></dd></dl>'
+        '<dl class="tm-list-item"><dt class="tm-list-item-title">Issued</dt>'
+        '<dd class="tm-list-item-value"><span class="accent-color">26590 of 31024</span></dd></dl>'
+        '<div class="tm-list-footer" style="padding:10px 16px;color:#8794a1;font-size:13px;">'
+        'Gifted by \u0442\u0451\u043c\u0430 to \u0442\u0451\u043c\u0430 on 8 November 2024'
+        '</div>'
+        '</div>\n    '
+    )
     content = re.sub(
         r'<div class="tm-list tm-section-box tm-section-auction-info">.*?(?=<div class="tm-section-box tm-section-buttons">)',
-        '',
+        new_auction_info,
         content, flags=re.DOTALL
     )
     # Clean up any remaining stale owner/date text that may survive from the template
@@ -297,12 +324,15 @@ def generate_gift_for_sale_page(gift_id):
         content, flags=re.DOTALL
     )
 
-    # --- 1-row Ownership History (31 TON, 2025, anonymous wallet) ---
+    # --- 1-row Ownership History (31 TON, Feb 7 2026, anonymous wallet) ---
     w1 = "UQBx7...3kR2F"
     history_rows = (
         '\n       <tr>'
         '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">31</div></div></td>'
-        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>14 Nov 2025 at 17:42</time></span></div></div></td>'
+        '\n        <td><div class="table-cell"><div class="tm-datetime">'
+        '<span class="thin-only"><time class="short">Feb 7 at 01:43</time></span>'
+        '<span class="wide-only"><time>7 Feb 2026 at 01:43</time></span>'
+        '</div></div></td>'
         f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">{w1}</span></a></div></td>'
         '\n       </tr>\n       '
     )
@@ -315,8 +345,8 @@ def generate_gift_for_sale_page(gift_id):
 
     # --- Fix og: meta tags for correct link preview ---
     content = re.sub(
-        r'<meta content="https://nft\.fragment\.com/username/[^"]*" property="og:image"/>',
-        f'<meta content="/images/{img_slug}.medium.jpg" property="og:image"/>',
+        r'<meta content="[^"]*" property="og:image"/>',
+        f'<meta content="{abs_img_url}" property="og:image"/>',
         content
     )
     content = re.sub(
@@ -999,7 +1029,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
         # /nft/GiftId → for-sale gift NFT product page
         if file_path is None and re.match(r'^/nft/[^/?]+$', path):
             gift_id = path.split("/nft/")[1]
-            content = generate_gift_for_sale_page(gift_id)
+            content = generate_gift_for_sale_page(gift_id, host=self.headers.get("Host", ""))
             if content:
                 self.serve_content(content, is_ajax)
                 return
