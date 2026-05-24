@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>Admin – Fragment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0"/>
+  <link href="/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="/css/auction.css" rel="stylesheet"/>
+  <style>
+    body { background: #121519; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Roboto', Arial, sans-serif; }
+    .admin-wrap { max-width: 620px; margin: 0 auto; padding: 32px 16px 64px; }
+    h1 { font-size: 22px; font-weight: 700; margin-bottom: 28px; display: flex; align-items: center; gap: 10px; }
+    h1 .badge { background: #248bda22; color: #248bda; font-size: 11px; padding: 3px 9px; border-radius: 6px; font-weight: 600; letter-spacing: 0.5px; }
+    .card { background: #1a2026; border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+    .card-title { font-size: 11px; font-weight: 700; color: #8794a1; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 14px; }
+    label { display: block; font-size: 13px; color: #8794a1; margin-bottom: 5px; margin-top: 14px; }
+    label:first-of-type { margin-top: 0; }
+    input[type=text], input[type=number] {
+      width: 100%; padding: 11px 14px; background: #121519; border: 1px solid #2a3540;
+      border-radius: 10px; color: #fff; font-size: 15px; outline: none; box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+    input:focus { border-color: #248bda; }
+    .row2 { display: grid; grid-template-columns: 1fr 72px; gap: 8px; }
+    .img-wrap { display: flex; justify-content: center; margin: 16px 0 8px; }
+    .img-preview { width: 120px; height: 120px; border-radius: 18px; object-fit: cover; display: none; }
+    .img-placeholder { width: 120px; height: 120px; border-radius: 18px; background: #1e2a36; display: flex; align-items: center; justify-content: center; color: #3a4a58; font-size: 40px; }
+    .wallet-box { background: #121519; border: 1px solid #2a3540; border-radius: 10px; padding: 11px 14px; font-size: 12px; color: #8794a1; word-break: break-all; min-height: 44px; }
+    .btn-gen { margin-top: 8px; padding: 10px 16px; background: #121519; border: 1px solid #2a3540; border-radius: 10px; color: #8794a1; font-size: 13px; cursor: pointer; width: 100%; transition: all 0.15s; }
+    .btn-gen:hover { border-color: #248bda; color: #fff; }
+    .btn-publish { width: 100%; padding: 15px; background: #248bda; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 20px; transition: background 0.15s; }
+    .btn-publish:hover { background: #1e7ec0; }
+    .btn-publish:disabled { background: #1e2a36; color: #3a4a58; cursor: not-allowed; }
+    .success-box { background: #0d2e1a; border: 1px solid #1a5c30; border-radius: 12px; padding: 16px; margin-top: 16px; display: none; }
+    .success-link { color: #248bda; word-break: break-all; font-size: 14px; }
+    .listing-item { display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid #1e2a36; }
+    .listing-item:last-child { border-bottom: none; }
+    .listing-thumb { width: 48px; height: 48px; border-radius: 12px; object-fit: cover; background: #121519; flex-shrink: 0; }
+    .listing-info { flex: 1; min-width: 0; }
+    .listing-title { font-size: 14px; font-weight: 600; }
+    .listing-meta { font-size: 12px; color: #8794a1; margin-top: 2px; }
+    .listing-link a { font-size: 12px; color: #248bda; }
+    .btn-del { background: #2a1515; border: 1px solid #5c2020; color: #e05050; border-radius: 8px; padding: 6px 12px; font-size: 12px; cursor: pointer; flex-shrink: 0; }
+    .btn-del:hover { background: #3a1515; }
+    .empty-msg { color: #3a4a58; font-size: 14px; text-align: center; padding: 24px 0; }
+    .section-divider { height: 1px; background: #1e2a36; margin: 16px 0; }
+  </style>
+</head>
+<body>
+<div class="admin-wrap">
+  <h1>Admin Panel <span class="badge">SECRET</span></h1>
+
+  <div class="card">
+    <div class="card-title">New NFT Listing</div>
+
+    <label>Gift slug (collection-number)</label>
+    <input type="text" id="slug" placeholder="e.g. vintagecigar-16398" oninput="onSlugChange()"/>
+
+    <div class="img-wrap">
+      <div class="img-placeholder" id="img-placeholder">🎁</div>
+      <img id="img-preview" class="img-preview" src="" alt="" onerror="imgError()" onload="imgLoaded()"/>
+    </div>
+
+    <label>Title (auto-generated)</label>
+    <input type="text" id="title" placeholder="Vintage Cigar #16398"/>
+
+    <label>Price (TON)</label>
+    <input type="number" id="price" placeholder="15" min="1"/>
+
+    <div class="section-divider"></div>
+    <div class="card-title">Characteristics</div>
+
+    <label>Model</label>
+    <div class="row2">
+      <input type="text" id="model" placeholder="Seeing Red"/>
+      <input type="text" id="model_pct" placeholder="2%"/>
+    </div>
+
+    <label>Backdrop</label>
+    <div class="row2">
+      <input type="text" id="backdrop" placeholder="Khaki Green"/>
+      <input type="text" id="backdrop_pct" placeholder="2%"/>
+    </div>
+
+    <label>Symbol</label>
+    <div class="row2">
+      <input type="text" id="symbol" placeholder="Gold"/>
+      <input type="text" id="symbol_pct" placeholder="1%"/>
+    </div>
+
+    <label>Issued</label>
+    <input type="text" id="issued" placeholder="26590 of 31024"/>
+
+    <label>Gifted text (optional)</label>
+    <input type="text" id="gifted" placeholder="Gifted by ... to ... on 8 November 2024"/>
+
+    <div class="section-divider"></div>
+    <div class="card-title">Ownership History (optional)</div>
+
+    <label>Previous price (TON)</label>
+    <input type="number" id="history_price" placeholder="10"/>
+
+    <label>Date short</label>
+    <input type="text" id="history_date_short" placeholder="Feb 7 at 01:43"/>
+
+    <label>Date full</label>
+    <input type="text" id="history_date_long" placeholder="7 Feb 2026 at 01:43"/>
+
+    <label>Buyer wallet</label>
+    <input type="text" id="history_wallet" placeholder="UQBx7...3kR2F"/>
+
+    <div class="section-divider"></div>
+    <div class="card-title">Owner Wallet (random)</div>
+    <div class="wallet-box" id="wallet-display">—</div>
+    <button class="btn-gen" onclick="generateWallet()">↻ Generate new wallet</button>
+
+    <button class="btn-publish" id="btn-publish" onclick="publish()">Publish to Market</button>
+
+    <div class="success-box" id="success-box">
+      <div style="color:#4caf50;font-weight:600;margin-bottom:8px;">✓ Published!</div>
+      <div>Link: <a class="success-link" id="success-link" href="#" target="_blank"></a></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Active Listings</div>
+    <div id="listings-container"><div class="empty-msg">Loading…</div></div>
+  </div>
+</div>
+
+<script>
+var walletFull = "";
+var walletShort = "";
+
+function slugToTitle(slug) {
+  var lastDash = slug.lastIndexOf('-');
+  if (lastDash === -1) return slug.replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+  var num = slug.slice(lastDash + 1);
+  if (!/^\d+$/.test(num)) {
+    return slug.replace(/-/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+  }
+  var coll = slug.slice(0, lastDash);
+  var collTitle = coll.replace(/-/g, ' ').replace(/\b\w/g, function(c){ return c.toUpperCase(); });
+  return collTitle + ' #' + num;
+}
+
+function onSlugChange() {
+  var slug = document.getElementById('slug').value.trim().toLowerCase();
+  if (!slug) return;
+  var img = document.getElementById('img-preview');
+  img.src = '/images/' + slug + '.medium.jpg';
+  document.getElementById('title').value = slugToTitle(slug);
+}
+
+function imgLoaded() {
+  document.getElementById('img-preview').style.display = 'block';
+  document.getElementById('img-placeholder').style.display = 'none';
+}
+
+function imgError() {
+  document.getElementById('img-preview').style.display = 'none';
+  document.getElementById('img-placeholder').style.display = 'flex';
+}
+
+function generateWallet() {
+  var chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+  var prefixes = ['EQB', 'UQB', 'EQA', 'UQA'];
+  var prefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+  var body = '';
+  for (var i = 0; i < 44; i++) body += chars[Math.floor(Math.random() * chars.length)];
+  walletFull = prefix + body;
+  walletShort = walletFull.slice(0, 7) + '...' + walletFull.slice(-5);
+  document.getElementById('wallet-display').textContent = walletFull;
+}
+
+function publish() {
+  var slug = document.getElementById('slug').value.trim().toLowerCase();
+  if (!slug) { alert('Enter a gift slug'); return; }
+  if (!walletFull) { alert('Generate a wallet first'); return; }
+  var price = parseInt(document.getElementById('price').value) || 0;
+  if (price <= 0) { alert('Enter a valid price'); return; }
+
+  var params = new URLSearchParams();
+  params.append('method', 'listNft');
+  params.append('slug', slug);
+  params.append('title', document.getElementById('title').value || slugToTitle(slug));
+  params.append('price', price);
+  params.append('model', document.getElementById('model').value);
+  params.append('model_pct', document.getElementById('model_pct').value);
+  params.append('backdrop', document.getElementById('backdrop').value);
+  params.append('backdrop_pct', document.getElementById('backdrop_pct').value);
+  params.append('symbol', document.getElementById('symbol').value);
+  params.append('symbol_pct', document.getElementById('symbol_pct').value);
+  params.append('issued', document.getElementById('issued').value);
+  params.append('gifted', document.getElementById('gifted').value);
+  params.append('history_price', document.getElementById('history_price').value);
+  params.append('history_date_short', document.getElementById('history_date_short').value);
+  params.append('history_date_long', document.getElementById('history_date_long').value);
+  params.append('history_wallet', document.getElementById('history_wallet').value);
+  params.append('owner_full', walletFull);
+  params.append('owner_short', walletShort);
+
+  var btn = document.getElementById('btn-publish');
+  btn.disabled = true;
+  btn.textContent = 'Publishing…';
+
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params.toString()
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(resp) {
+    btn.disabled = false;
+    btn.textContent = 'Publish to Market';
+    if (resp.ok) {
+      var link = location.origin + '/nft/' + resp.nft_url_slug;
+      document.getElementById('success-link').href = link;
+      document.getElementById('success-link').textContent = link;
+      document.getElementById('success-box').style.display = 'block';
+      loadListings();
+    } else {
+      alert('Error: ' + (resp.error || 'unknown'));
+    }
+  })
+  .catch(function() {
+    btn.disabled = false;
+    btn.textContent = 'Publish to Market';
+    alert('Network error');
+  });
+}
+
+function deleteListing(slug) {
+  if (!confirm('Delete listing "' + slug + '"?')) return;
+  var params = new URLSearchParams();
+  params.append('method', 'deleteNft');
+  params.append('slug', slug);
+  fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params.toString()
+  })
+  .then(function(r) { return r.json(); })
+  .then(function(resp) { if (resp.ok) loadListings(); });
+}
+
+function loadListings() {
+  fetch('/api/listings')
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      var cont = document.getElementById('listings-container');
+      if (!data.listings || data.listings.length === 0) {
+        cont.innerHTML = '<div class="empty-msg">No active listings</div>';
+        return;
+      }
+      var html = '';
+      data.listings.forEach(function(item) {
+        html += '<div class="listing-item">';
+        html += '<img class="listing-thumb" src="/images/' + item.img_slug + '.medium.jpg" onerror="this.style.opacity=\'0.3\'" />';
+        html += '<div class="listing-info">';
+        html += '<div class="listing-title">' + item.title + '</div>';
+        html += '<div class="listing-meta">' + item.price + ' TON</div>';
+        html += '<div class="listing-link"><a href="/nft/' + item.slug + '" target="_blank">/nft/' + item.slug + '</a></div>';
+        html += '</div>';
+        html += '<button class="btn-del" onclick="deleteListing(\'' + item.slug + '\')">Delete</button>';
+        html += '</div>';
+      });
+      cont.innerHTML = html;
+    })
+    .catch(function() {
+      document.getElementById('listings-container').innerHTML = '<div class="empty-msg">Failed to load</div>';
+    });
+}
+
+generateWallet();
+loadListings();
+</script>
+</body>
+</html>
