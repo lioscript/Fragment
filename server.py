@@ -225,8 +225,8 @@ def generate_gift_for_sale_page(gift_id):
     usd = price_ton * TON_RATE
     usd_str = f"~ ${usd:.0f}"
     price_str = str(price_ton)
-    slug = gift_id.lower()          # vintageCigar-16398
-    img_slug = "vintagecigar-15623"  # reuse existing image
+    slug = gift_id.lower()          # vintagecigar-16398
+    img_slug = "vintagecigar-16398"  # new dedicated image
 
     with open("html/page_gift.html", "r", encoding="utf-8", errors="ignore") as f:
         content = f.read()
@@ -281,22 +281,11 @@ def generate_gift_for_sale_page(gift_id):
     content = content.replace('Purchased on 22 May 2026 at 12:40', '')
     content = content.replace('May 22 at 12:40', '')
 
-    # --- Countdown (360 days) inserted before buttons ---
-    countdown_html = (
-        '\n    <div class="tm-section-box tm-section-countdown-wrap js-timer-wrap">'
-        '\n     <div class="tm-section-countdown">'
-        '\n      <span class="tm-countdown-label short">Ends in</span>'
-        '\n      <span class="tm-countdown-label full">Sale ends in</span>'
-        '\n      <time class="tm-countdown-timer" data-relative="counter" datetime="2027-05-18T12:00:00+00:00"></time>'
-        '\n     </div>'
-        '\n     <div class="tm-section-countdown-end">'
-        '\n      <span class="tm-countdown-label">Sale will close soon</span>'
-        '\n     </div>'
-        '\n    </div>\n    '
-    )
-    content = content.replace(
-        '<div class="tm-section-box tm-section-buttons">',
-        countdown_html + '<div class="tm-section-box tm-section-buttons">'
+    # --- Remove countdown block entirely ---
+    content = re.sub(
+        r'<div class="tm-section-box tm-section-countdown-wrap[^"]*">.*?</div>\s*</div>',
+        '',
+        content, flags=re.DOTALL
     )
 
     # --- Buy button ---
@@ -308,25 +297,28 @@ def generate_gift_for_sale_page(gift_id):
         content, flags=re.DOTALL
     )
 
-    # --- 4-row Ownership History (target only the Ownership History section's tbody) ---
+    # --- 4-row Ownership History (30–50 TON, anonymous wallets) ---
+    w1 = "UQBx7...3kR2F"
+    w2 = "EQDm9...7pL4W"
+    w3 = "UQAn4...9cT1X"
     history_rows = (
         '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">11</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">30</div></div></td>'
         '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>12 Jan 2026 at 09:15</time></span></div></div></td>'
-        '\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">fragment.ton</span></a></div></td>'
+        f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">{w1}</span></a></div></td>'
         '\n       </tr>'
         '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">15</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">38</div></div></td>'
         '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>3 Mar 2026 at 14:22</time></span></div></div></td>'
-        '\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">satoshi.ton</span></a></div></td>'
+        f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">{w2}</span></a></div></td>'
         '\n       </tr>'
         '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">20</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">44</div></div></td>'
         '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>19 Apr 2026 at 18:05</time></span></div></div></td>'
-        '\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">venom.ton</span></a></div></td>'
+        f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/" target="_blank"><span class="short">{w3}</span></a></div></td>'
         '\n       </tr>'
         '\n       <tr>'
-        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">25</div></div></td>'
+        '\n        <td><div class="table-cell"><div class="table-cell-value tm-value icon-before icon-ton">50</div></div></td>'
         '\n        <td><div class="table-cell"><div class="tm-datetime"><span class="wide-only"><time>10 May 2026 at 11:30</time></span></div></div></td>'
         f'\n        <td><div class="table-cell"><a class="tm-wallet" href="https://tonviewer.com/{owner_full}" target="_blank"><span class="short">{owner_short}</span></a></div></td>'
         '\n       </tr>\n       '
@@ -336,6 +328,17 @@ def generate_gift_for_sale_page(gift_id):
         r'(Ownership History.*?<tfoot>.*?</tfoot>\s*<tbody>).*?(</tbody>)',
         r'\g<1>' + history_rows + r'\g<2>',
         content, flags=re.DOTALL
+    )
+
+    # --- Center image and add top margin to title ---
+    content = content.replace(
+        '<div class="tm-main-nft-image-header tm-section-box">',
+        '<div class="tm-main-nft-image-header tm-section-box" style="display:flex;justify-content:center;margin-top:8px;">',
+    )
+    content = content.replace(
+        '<div class="tm-section-header">',
+        '<div class="tm-section-header" style="margin-top:16px;">',
+        1
     )
 
     # --- Fix ajInit ---
