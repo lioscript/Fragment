@@ -1322,41 +1322,60 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 with _ureq.urlopen(req, timeout=10) as resp:
                     html_raw = resp.read().decode("utf-8", errors="ignore")
                 result = {}
-                # Title from <title> or h1
+                # Slug from URL
+                slug_m = re.search(r'/gift/([a-zA-Z0-9\-]+)', url)
+                if slug_m:
+                    result["slug"] = slug_m.group(1).lower()
+                # Title from <title>
                 t = re.search(r'<title[^>]*>([^<]+)</title>', html_raw)
                 if t:
-                    title_raw = t.group(1).strip().split("–")[0].split("|")[0].strip()
+                    title_raw = t.group(1).strip().split("\u2013")[0].split("|")[0].strip()
                     result["title"] = title_raw
-                h1 = re.search(r'<h1[^>]*class="[^"]*tm-section-header[^"]*"[^>]*>\s*([^<]+)', html_raw)
-                if h1:
-                    result["title"] = h1.group(1).strip()
-                # Attributes: model, backdrop, symbol, issued, gifted
-                attr_names  = re.findall(r'class="[^"]*tm-gift-attr-name[^"]*"[^>]*>([^<]+)<', html_raw)
-                attr_values = re.findall(r'class="[^"]*tm-gift-attr-value[^"]*"[^>]*>([^<]+)<', html_raw)
-                attr_rarity = re.findall(r'class="[^"]*tm-gift-attr-rarity[^"]*"[^>]*>([^<]+)<', html_raw)
+                # Fragment.com attributes: extract labels, values, rarities sequentially
+                # Labels: <div class="table-cell">Label</div>
+                # Values: <a class="table-cell-value-link">Value</a>
+                # Rarities: <span class="tm-rarity">X%</span>
+                attr_labels = re.findall(r'<div class="table-cell">([^<]+)</div>', html_raw)
+                attr_values_list = re.findall(r'class="table-cell-value-link"[^>]*>([^<]+)</a>', html_raw)
+                attr_rarities = [r.strip() for r in re.findall(r'<span class="tm-rarity">\s*([^<]+?)\s*</span>', html_raw)]
                 attr_map = {}
-                for i, name in enumerate(attr_names):
-                    val = attr_values[i] if i < len(attr_values) else ""
-                    rar = attr_rarity[i] if i < len(attr_rarity) else ""
-                    attr_map[name.strip().lower()] = (val.strip(), rar.strip())
-                if "model" in attr_map:
-                    result["model"], result["model_pct"] = attr_map["model"]
-                if "backdrop" in attr_map:
-                    result["backdrop"], result["backdrop_pct"] = attr_map["backdrop"]
-                if "symbol" in attr_map:
-                    result["symbol"], result["symbol_pct"] = attr_map["symbol"]
-                # Issued
-                iss = re.search(r'(\d[\d,]+)\s+of\s+(\d[\d,]+)', html_raw)
-                if iss:
-                    result["issued"] = iss.group(1).replace(",","") + " of " + iss.group(2).replace(",","")
+                vi = 0
+                for label in attr_labels:
+                    label_lower = label.strip().lower()
+                    if label_lower in ("model", "backdrop", "symbol"):
+                        val = attr_values_list[vi] if vi < len(attr_values_list) else ""
+                        rar = attr_rarities[vi]     if vi < len(attr_rarities)    else ""
+                        attr_map[label_lower] = (val.strip(), rar.strip())
+                        vi += 1
+                if "model"    in attr_map: result["model"],    result["model_pct"]    = attr_map["model"]
+                if "backdrop" in attr_map: result["backdrop"], result["backdrop_pct"] = attr_map["backdrop"]
+                if "symbol"   in attr_map: result["symbol"],   result["symbol_pct"]   = attr_map["symbol"]
+                # Issued: look for "X of Y" pattern near "Issued" label
+                iss_block = re.search(r'Issued.*?(\d[\d\s,]+)\s+of\s+(\d[\d\s,]+)', html_raw, re.DOTALL)
+                if iss_block:
+                    result["issued"] = iss_block.group(1).replace(",","").strip() + " of " + iss_block.group(2).replace(",","").strip()
                 # Gifted text
-                gift_m = re.search(r'Gifted by[^<]{5,120}', html_raw)
+                gift_m = re.search(r'Gifted by.{5,200}', html_raw)
                 if gift_m:
-                    result["gifted_text"] = re.sub(r'<[^>]+>', '', gift_m.group(0)).strip()
-                # Slug from URL
-                slug_m = re.search(r'/gift/([a-z0-9\-]+)', url)
-                if slug_m:
-                    result["slug"] = slug_m.group(1)
+                    result["gifted_text"] = re.sub(r'<[^>]+>', '', gift_m.group(0)).strip()[:150]
+                # Download image from fragment CDN and save locally
+                if result.get("slug"):
+                    img_slug = result["slug"]
+                    local_img = os.path.join("images", img_slug + ".medium.jpg")
+                    if not os.path.exists(local_img):
+                        try:
+                            cdn_url = f"https://nft.fragment.com/gift/{img_slug}.medium.jpg"
+                            img_req = _ureq.Request(cdn_url, headers={"User-Agent": "Mozilla/5.0"})
+                            with _ureq.urlopen(img_req, timeout=10) as img_resp:
+                                img_data = img_resp.read()
+                            os.makedirs("images", exist_ok=True)
+                            with open(local_img, "wb") as f:
+                                f.write(img_data)
+                            result["img_downloaded"] = True
+                        except Exception:
+                            result["img_downloaded"] = False
+                    else:
+                        result["img_downloaded"] = True
                 self.send_json({"ok": 1, "data": result})
             except Exception as e:
                 self.send_json({"ok": 0, "error": str(e)})
