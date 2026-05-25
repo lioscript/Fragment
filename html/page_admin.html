@@ -174,6 +174,11 @@ function onUrlChange() {
 function fetchFromUrl() {
   var url = document.getElementById('frag-url').value.trim();
   if (!url) { setStatus('Введіть посилання', '#e05050'); return; }
+  // Validate URL contains a specific gift slug
+  if (!/\/gift\/[a-z0-9\-]+/i.test(url)) {
+    setStatus('❌ Потрібне посилання на конкретний подарунок — наприклад: fragment.com/gift/vintagecigar-16398', '#e05050');
+    return;
+  }
   var btn = document.getElementById('btn-fetch');
   btn.disabled = true;
   btn.textContent = '…';
@@ -185,7 +190,14 @@ function fetchFromUrl() {
       btn.textContent = '↓ Завантажити';
       if (!resp.ok) { setStatus('Помилка: ' + (resp.error || 'невідома'), '#e05050'); return; }
       var d = resp.data;
-      if (d.slug)         { document.getElementById('slug').value  = d.slug; document.getElementById('img-preview').src = '/images/' + d.slug + '.medium.jpg'; }
+      if (d.slug) {
+        document.getElementById('slug').value = d.slug;
+        var img = document.getElementById('img-preview');
+        img.style.display = 'none';
+        document.getElementById('img-placeholder').style.display = 'flex';
+        img.src = '';
+        setTimeout(function() { img.src = '/images/' + d.slug + '.medium.jpg'; }, 30);
+      }
       if (d.title)        document.getElementById('title').value        = d.title;
       if (d.model)        document.getElementById('model').value        = d.model;
       if (d.model_pct)    document.getElementById('model_pct').value    = d.model_pct;
