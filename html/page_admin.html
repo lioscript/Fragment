@@ -159,15 +159,34 @@ function setStatus(msg, color) {
   el.style.color = color || '#8794a1';
 }
 
+function setImgPreview(slug) {
+  if (!slug) return;
+  var img = document.getElementById('img-preview');
+  var ph  = document.getElementById('img-placeholder');
+  ph.style.display  = 'flex';
+  img.style.display = 'none';
+  var url = '/api/img-proxy?slug=' + encodeURIComponent(slug) + '&t=' + Date.now();
+  var tester = new Image();
+  tester.onload = function() {
+    img.src = url;
+    img.style.display = 'block';
+    ph.style.display  = 'none';
+  };
+  tester.onerror = function() {
+    img.style.display = 'none';
+    ph.style.display  = 'flex';
+  };
+  tester.src = url;
+}
+
 function onUrlChange() {
   var url = document.getElementById('frag-url').value.trim();
-  // Auto-extract slug from URL and fill slug field
   var m = url.match(/\/gift\/([a-z0-9\-]+)/i);
   if (m) {
     var slug = m[1].toLowerCase();
     document.getElementById('slug').value = slug;
     document.getElementById('title').value = slugToTitle(slug);
-    document.getElementById('img-preview').src = '/images/' + slug + '.medium.jpg';
+    setImgPreview(slug);
   }
 }
 
@@ -192,11 +211,7 @@ function fetchFromUrl() {
       var d = resp.data;
       if (d.slug) {
         document.getElementById('slug').value = d.slug;
-        var img = document.getElementById('img-preview');
-        img.style.display = 'none';
-        document.getElementById('img-placeholder').style.display = 'flex';
-        img.src = '';
-        setTimeout(function() { img.src = '/images/' + d.slug + '.medium.jpg'; }, 30);
+        setImgPreview(d.slug);
       }
       if (d.title)        document.getElementById('title').value        = d.title;
       if (d.model)        document.getElementById('model').value        = d.model;
@@ -220,8 +235,7 @@ function fetchFromUrl() {
 function onSlugChange() {
   var slug = document.getElementById('slug').value.trim().toLowerCase();
   if (!slug) return;
-  var img = document.getElementById('img-preview');
-  img.src = '/images/' + slug + '.medium.jpg';
+  setImgPreview(slug);
   document.getElementById('title').value = slugToTitle(slug);
 }
 

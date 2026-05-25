@@ -1335,6 +1335,39 @@ class Handler(http.server.BaseHTTPRequestHandler):
             self.send_json({"ok": 1, "listings": listings})
             return
 
+        # /api/img-proxy → proxy image from fragment CDN and cache locally
+        if file_path is None and path == "/api/img-proxy":
+            qs2 = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
+            img_slug_p = qs2.get("slug", [""])[0].strip().lower()
+            if not img_slug_p:
+                self.send_empty_ok("image/jpeg")
+                return
+            local_img_p = os.path.join("images", img_slug_p + ".medium.jpg")
+            # Try to serve locally cached file first
+            if os.path.isfile(local_img_p):
+                with open(local_img_p, "rb") as fimg:
+                    img_bytes = fimg.read()
+            else:
+                try:
+                    import urllib.request as _ureq2
+                    cdn = f"https://nft.fragment.com/gift/{img_slug_p}.medium.jpg"
+                    ir = _ureq2.Request(cdn, headers={"User-Agent": "Mozilla/5.0"})
+                    with _ureq2.urlopen(ir, timeout=10) as ir_resp:
+                        img_bytes = ir_resp.read()
+                    os.makedirs("images", exist_ok=True)
+                    with open(local_img_p, "wb") as fimg:
+                        fimg.write(img_bytes)
+                except Exception:
+                    self.send_empty_ok("image/jpeg")
+                    return
+            self.send_response(200)
+            self.send_header("Content-Type", "image/jpeg")
+            self.send_header("Content-Length", str(len(img_bytes)))
+            self.send_header("Cache-Control", "public, max-age=86400")
+            self.end_headers()
+            self.wfile.write(img_bytes)
+            return
+
         # /api/fetch-nft?url=... → fetch fragment.com gift page and parse characteristics
         if file_path is None and path == "/api/fetch-nft":
             qs = urllib.parse.parse_qs(self.path.split("?", 1)[1] if "?" in self.path else "")
