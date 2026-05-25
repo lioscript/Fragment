@@ -1037,7 +1037,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             cards.append(
                 f'         <a class="tm-grid-item" href="/nft/{slug}">\n'
                 f'          <div class="tm-grid-item-thumb">\n'
-                f'           <img class="tm-grid-thumb" src="images/{slug}.medium.jpg"/>\n'
+                f'           <img class="tm-grid-thumb" src="/images/{slug}.medium.jpg"/>\n'
                 f'           <div class="tm-grid-item-num thin-only">{num}</div>\n'
                 f'           <div class="tm-grid-item-desc thin-only"></div>\n'
                 f'          </div>\n'

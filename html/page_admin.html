@@ -163,20 +163,9 @@ function setImgPreview(slug) {
   if (!slug) return;
   var img = document.getElementById('img-preview');
   var ph  = document.getElementById('img-placeholder');
-  ph.style.display  = 'flex';
-  img.style.display = 'none';
-  var url = '/api/img-proxy?slug=' + encodeURIComponent(slug) + '&t=' + Date.now();
-  var tester = new Image();
-  tester.onload = function() {
-    img.src = url;
-    img.style.display = 'block';
-    ph.style.display  = 'none';
-  };
-  tester.onerror = function() {
-    img.style.display = 'none';
-    ph.style.display  = 'flex';
-  };
-  tester.src = url;
+  ph.style.display  = 'none';
+  img.style.display = 'block';
+  img.src = '/api/img-proxy?slug=' + encodeURIComponent(slug) + '&t=' + Date.now();
 }
 
 function onUrlChange() {
