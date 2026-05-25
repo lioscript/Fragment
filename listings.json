@@ -18,5 +18,25 @@
     "history_date_short": "",
     "history_date_long": "",
     "history_wallet": ""
+  },
+  "blingbinky-1094": {
+    "slug": "blingbinky-1094",
+    "title": "Bling Binky #1094",
+    "price": 67,
+    "owner_full": "EQAOHGSDJa__QQcHhA-x3LL1a26t92dHhcmgLqFis7pyVXX",
+    "owner_short": "EQAOHGS...pyVXX",
+    "img_slug": "blingbinky-1094",
+    "model": "Red Bull",
+    "model_pct": "2.5%",
+    "backdrop": "Mystic Pearl",
+    "backdrop_pct": "1.5%",
+    "symbol": "Inguz Rune",
+    "symbol_pct": "0.4%",
+    "issued": "9385 of 9990",
+    "gifted_text": "",
+    "history_price": "1488",
+    "history_date_short": "Feb 7 at 08:08",
+    "history_date_long": "",
+    "history_wallet": "Pidoras.ton"
   }
 }

@@ -1061,12 +1061,12 @@ class Handler(http.server.BaseHTTPRequestHandler):
     def send_full_page(self, file_path):
         with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
             content = f.read()
-        # Inject dynamic gift listing cards into page_3.html
+        # Inject dynamic gift listing cards into page_3.html (at the TOP of the grid)
         if file_path == "html/page_3.html" and DYNAMIC_LISTINGS:
             inject = self._build_dynamic_gift_cards()
             content = content.replace(
-                '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
-                inject + '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
+                '         <a class="tm-grid-item" href="/gift/',
+                inject + '         <a class="tm-grid-item" href="/gift/',
                 1
             )
         # Fix ton_proof in full page loads too
@@ -1119,8 +1119,8 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 raw = f.read()
             inject = self._build_dynamic_gift_cards()
             raw = raw.replace(
-                '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
-                inject + '         <div class="tm-grid-item-shadow js-autoscroll-trash">',
+                '         <a class="tm-grid-item" href="/gift/',
+                inject + '         <a class="tm-grid-item" href="/gift/',
                 1
             )
             page = parse_page_from_string(raw)
